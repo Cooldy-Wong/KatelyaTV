@@ -12,28 +12,28 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, key, config, username } = body;
 
-    // 验证请求参数
+    // 驗證請求參數
     if (!action) {
-      return NextResponse.json({ error: '缺少操作类型' }, { status: 400 });
+      return NextResponse.json({ error: '缺少操作型別' }, { status: 400 });
     }
 
-    // 获取认证信息
+    // 獲取認證資訊
     const authInfo = getAuthInfoFromCookie(request);
     
-    // 如果是直接传入的认证信息（客户端模式），使用传入的信息
+    // 如果是直接傳入的認證資訊（客戶端模式），使用傳入的資訊
     const finalUsername = username || authInfo?.username;
     
     if (!finalUsername) {
-      return NextResponse.json({ error: '用户未登录' }, { status: 401 });
+      return NextResponse.json({ error: '使用者未登錄' }, { status: 401 });
     }
 
-    // 创建存储实例
+    // 建立儲存實例
     const storage = getStorage();
 
     switch (action) {
       case 'get': {
         if (!key) {
-          return NextResponse.json({ error: '缺少配置键' }, { status: 400 });
+          return NextResponse.json({ error: '缺少配置鍵' }, { status: 400 });
         }
 
         const skipConfig = await storage.getSkipConfig(finalUsername, key);
@@ -42,15 +42,15 @@ export async function POST(request: NextRequest) {
 
       case 'set': {
         if (!key || !config) {
-          return NextResponse.json({ error: '缺少配置键或配置数据' }, { status: 400 });
+          return NextResponse.json({ error: '缺少配置鍵或配置數據' }, { status: 400 });
         }
 
-        // 验证配置数据结构
+        // 驗證配置數據結構
         if (!config.source || !config.id || !config.title || !Array.isArray(config.segments)) {
-          return NextResponse.json({ error: '配置数据格式错误' }, { status: 400 });
+          return NextResponse.json({ error: '配置數據格式錯誤' }, { status: 400 });
         }
 
-        // 验证片段数据
+        // 驗證片段數據
         for (const segment of config.segments) {
           if (
             typeof segment.start !== 'number' ||
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
             segment.start >= segment.end ||
             !['opening', 'ending'].includes(segment.type)
           ) {
-            return NextResponse.json({ error: '片段数据格式错误' }, { status: 400 });
+            return NextResponse.json({ error: '片段數據格式錯誤' }, { status: 400 });
           }
         }
 
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
 
       case 'delete': {
         if (!key) {
-          return NextResponse.json({ error: '缺少配置键' }, { status: 400 });
+          return NextResponse.json({ error: '缺少配置鍵' }, { status: 400 });
         }
 
         await storage.deleteSkipConfig(finalUsername, key);
@@ -81,13 +81,13 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json({ error: '不支持的操作类型' }, { status: 400 });
+        return NextResponse.json({ error: '不支援的操作型別' }, { status: 400 });
     }
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('跳过配置 API 错误:', error);
+    console.error('跳過配置 API 錯誤:', error);
     return NextResponse.json(
-      { error: '服务器内部错误' },
+      { error: '伺服器內部錯誤' },
       { status: 500 }
     );
   }

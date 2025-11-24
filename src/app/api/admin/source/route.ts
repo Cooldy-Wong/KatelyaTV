@@ -9,7 +9,7 @@ import { IStorage } from '@/lib/types';
 
 export const runtime = 'edge';
 
-// 支持的操作类型
+// 支援的操作型別
 type Action = 'add' | 'disable' | 'enable' | 'delete' | 'sort';
 
 interface BaseBody {
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   if (storageType === 'localstorage') {
     return NextResponse.json(
       {
-        error: '不支持本地存储进行管理员配置',
+        error: '不支援本地儲存進行管理員配置',
       },
       { status: 400 }
     );
@@ -37,23 +37,23 @@ export async function POST(request: NextRequest) {
     }
     const username = authInfo.username;
 
-    // 基础校验
+    // 基礎校驗
     const ACTIONS: Action[] = ['add', 'disable', 'enable', 'delete', 'sort'];
     if (!username || !action || !ACTIONS.includes(action)) {
-      return NextResponse.json({ error: '参数格式错误' }, { status: 400 });
+      return NextResponse.json({ error: '參數格式錯誤' }, { status: 400 });
     }
 
-    // 获取配置与存储
+    // 獲取配置與儲存
     const adminConfig = await getConfig();
     const storage: IStorage | null = getStorage();
 
-    // 权限与身份校验
+    // 許可權與身份校驗
     if (username !== process.env.USERNAME) {
       const userEntry = adminConfig.UserConfig.Users.find(
         (u) => u.username === username
       );
       if (!userEntry || userEntry.role !== 'admin') {
-        return NextResponse.json({ error: '权限不足' }, { status: 401 });
+        return NextResponse.json({ error: '許可權不足' }, { status: 401 });
       }
     }
 
@@ -67,10 +67,10 @@ export async function POST(request: NextRequest) {
           is_adult?: boolean;
         };
         if (!key || !name || !api) {
-          return NextResponse.json({ error: '缺少必要参数' }, { status: 400 });
+          return NextResponse.json({ error: '缺少必要參數' }, { status: 400 });
         }
         if (adminConfig.SourceConfig.some((s) => s.key === key)) {
-          return NextResponse.json({ error: '该源已存在' }, { status: 400 });
+          return NextResponse.json({ error: '該源已存在' }, { status: 400 });
         }
         adminConfig.SourceConfig.push({
           key,
@@ -79,14 +79,14 @@ export async function POST(request: NextRequest) {
           detail,
           from: 'custom',
           disabled: false,
-          is_adult: is_adult || false, // 确保处理 is_adult 字段
+          is_adult: is_adult || false, // 確保處理 is_adult 欄位
         });
         break;
       }
       case 'disable': {
         const { key } = body as { key?: string };
         if (!key)
-          return NextResponse.json({ error: '缺少 key 参数' }, { status: 400 });
+          return NextResponse.json({ error: '缺少 key 參數' }, { status: 400 });
         const entry = adminConfig.SourceConfig.find((s) => s.key === key);
         if (!entry)
           return NextResponse.json({ error: '源不存在' }, { status: 404 });
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       case 'enable': {
         const { key } = body as { key?: string };
         if (!key)
-          return NextResponse.json({ error: '缺少 key 参数' }, { status: 400 });
+          return NextResponse.json({ error: '缺少 key 參數' }, { status: 400 });
         const entry = adminConfig.SourceConfig.find((s) => s.key === key);
         if (!entry)
           return NextResponse.json({ error: '源不存在' }, { status: 404 });
@@ -106,13 +106,13 @@ export async function POST(request: NextRequest) {
       case 'delete': {
         const { key } = body as { key?: string };
         if (!key)
-          return NextResponse.json({ error: '缺少 key 参数' }, { status: 400 });
+          return NextResponse.json({ error: '缺少 key 參數' }, { status: 400 });
         const idx = adminConfig.SourceConfig.findIndex((s) => s.key === key);
         if (idx === -1)
           return NextResponse.json({ error: '源不存在' }, { status: 404 });
         const entry = adminConfig.SourceConfig[idx];
         if (entry.from === 'config') {
-          return NextResponse.json({ error: '该源不可删除' }, { status: 400 });
+          return NextResponse.json({ error: '該源不可刪除' }, { status: 400 });
         }
         adminConfig.SourceConfig.splice(idx, 1);
         break;
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
         const { order } = body as { order?: string[] };
         if (!Array.isArray(order)) {
           return NextResponse.json(
-            { error: '排序列表格式错误' },
+            { error: '排序列表格式錯誤' },
             { status: 400 }
           );
         }
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
             map.delete(k);
           }
         });
-        // 未在 order 中的保持原顺序
+        // 未在 order 中的保持原順序
         adminConfig.SourceConfig.forEach((item) => {
           if (map.has(item.key)) newList.push(item);
         });
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: '未知操作' }, { status: 400 });
     }
 
-    // 持久化到存储
+    // 持久化到儲存
     if (storage && typeof (storage as any).setAdminConfig === 'function') {
       await (storage as any).setAdminConfig(adminConfig);
     }
@@ -159,10 +159,10 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error) {
-    console.error('视频源管理操作失败:', error);
+    console.error('視訊源管理操作失敗:', error);
     return NextResponse.json(
       {
-        error: '视频源管理操作失败',
+        error: '視訊源管理操作失敗',
         details: (error as Error).message,
       },
       { status: 500 }

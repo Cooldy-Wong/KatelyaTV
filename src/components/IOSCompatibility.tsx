@@ -11,31 +11,31 @@ export function IOSCompatibility({ children }: IOSCompatibilityProps) {
   const [isSafari, setIsSafari] = useState(false);
 
   useEffect(() => {
-    // 检测iOS设备
+    // 檢測iOS裝置
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     setIsIOS(iOS);
 
-    // 检测Safari浏览器
+    // 檢測Safari瀏覽器
     const safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     setIsSafari(safari);
 
-    // 如果是iOS Safari，添加特定的CSS类
+    // 如果是iOS Safari，新增特定的CSS類
     if (iOS && safari) {
       document.documentElement.classList.add('ios-safari');
       document.body.classList.add('ios-safari');
     }
 
-    // 清理函数
+    // 清理函式
     return () => {
       document.documentElement.classList.remove('ios-safari');
       document.body.classList.remove('ios-safari');
     };
   }, []);
 
-  // 如果是iOS Safari，应用特定的样式优化
+  // 如果是iOS Safari，應用特定的樣式優化
   useEffect(() => {
     if (isIOS && isSafari) {
-      // 禁用一些可能导致性能问题的CSS属性
+      // 禁用一些可能導致效能問題的CSS屬性
       const style = document.createElement('style');
       style.textContent = `
         .ios-safari * {

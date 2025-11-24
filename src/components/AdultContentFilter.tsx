@@ -12,11 +12,11 @@ const AdultContentFilter: React.FC<AdultContentFilterProps> = ({
   userName, 
   onUpdate 
 }) => {
-  const [isEnabled, setIsEnabled] = useState(true); // 默认开启过滤
+  const [isEnabled, setIsEnabled] = useState(true); // 預設開啟過濾
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 获取用户设置
+  // 獲取使用者設定
   useEffect(() => {
     const fetchUserSettings = async () => {
       if (!userName) return;
@@ -32,10 +32,10 @@ const AdultContentFilter: React.FC<AdultContentFilterProps> = ({
           const data = await response.json();
           setIsEnabled(data.settings.filter_adult_content);
         } else {
-          setError('获取用户设置失败');
+          setError('獲取使用者設定失敗');
         }
       } catch (err) {
-        setError('网络连接失败');
+        setError('網路連線失敗');
         // eslint-disable-next-line no-console
         console.error('Failed to fetch user settings:', err);
       }
@@ -44,7 +44,7 @@ const AdultContentFilter: React.FC<AdultContentFilterProps> = ({
     fetchUserSettings();
   }, [userName]);
 
-  // 更新用户设置
+  // 更新使用者設定
   const handleToggle = async () => {
     if (!userName || isLoading) return;
 
@@ -69,7 +69,7 @@ const AdultContentFilter: React.FC<AdultContentFilterProps> = ({
         const newState = !isEnabled;
         setIsEnabled(newState);
         
-        // 强制刷新用户设置缓存 - 向搜索API发送一个空请求来刷新设置
+        // 強制重新整理使用者設定快取 - 向搜索API發送一個空請求來重新整理設定
         try {
           await fetch('/api/search?q=_cache_refresh_', {
             headers: {
@@ -77,16 +77,16 @@ const AdultContentFilter: React.FC<AdultContentFilterProps> = ({
             },
           });
         } catch {
-          // 忽略刷新缓存的错误
+          // 忽略重新整理快取的錯誤
         }
         
         onUpdate?.(newState);
       } else {
         const errorData = await response.json();
-        setError(errorData.error || '更新设置失败');
+        setError(errorData.error || '更新設定失敗');
       }
     } catch (err) {
-      setError('网络连接失败');
+      setError('網路連線失敗');
       // eslint-disable-next-line no-console
       console.error('Failed to update user settings:', err);
     } finally {
@@ -107,12 +107,12 @@ const AdultContentFilter: React.FC<AdultContentFilterProps> = ({
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-              成人内容过滤
+              成人內容過濾
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {isEnabled 
-                ? '已开启过滤，将自动隐藏所有标记为"成人"的资源站及其内容' 
-                : '已关闭过滤，成人内容将在搜索结果中单独分组显示'
+                ? '已開啟過濾，將自動隱藏所有標記為"成人"的資源站及其內容' 
+                : '已關閉過濾，成人內容將在搜索結果中單獨分組顯示'
               }
             </p>
           </div>
@@ -162,7 +162,7 @@ const AdultContentFilter: React.FC<AdultContentFilterProps> = ({
               安全提示
             </h4>
             <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">
-              为了确保良好的使用体验和遵守相关法规，建议保持成人内容过滤开启。如需访问相关内容，请确保您已年满18周岁并承担相应法律责任。
+              爲了確保良好的使用體驗和遵守相關法規，建議保持成人內容過濾開啟。如需訪問相關內容，請確保您已年滿18週歲並承擔相應法律責任。
             </p>
           </div>
         </div>

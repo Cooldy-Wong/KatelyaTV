@@ -9,7 +9,7 @@ import { IStorage } from '@/lib/types';
 
 export const runtime = 'edge';
 
-// 支持的操作类型
+// 支援的操作型別
 const ACTIONS = [
   'add',
   'ban',
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
   if (storageType === 'localstorage') {
     return NextResponse.json(
       {
-        error: '不支持本地存储进行管理员配置',
+        error: '不支援本地儲存進行管理員配置',
       },
       { status: 400 }
     );
@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
     const username = authInfo.username;
 
     const {
-      targetUsername, // 目标用户名
-      targetPassword, // 目标用户密码（仅在添加用户时需要）
+      targetUsername, // 目標使用者名稱
+      targetPassword, // 目標使用者密碼（僅在新增使用者時需要）
       allowRegister,
       action,
     } = body as {
@@ -54,11 +54,11 @@ export async function POST(request: NextRequest) {
     };
 
     if (!action || !ACTIONS.includes(action)) {
-      return NextResponse.json({ error: '参数格式错误' }, { status: 400 });
+      return NextResponse.json({ error: '參數格式錯誤' }, { status: 400 });
     }
 
     if (action !== 'setAllowRegister' && !targetUsername) {
-      return NextResponse.json({ error: '缺少目标用户名' }, { status: 400 });
+      return NextResponse.json({ error: '缺少目標使用者名稱' }, { status: 400 });
     }
 
     if (
@@ -68,12 +68,12 @@ export async function POST(request: NextRequest) {
       username === targetUsername
     ) {
       return NextResponse.json(
-        { error: '无法对自己进行此操作' },
+        { error: '無法對自己進行此操作' },
         { status: 400 }
       );
     }
 
-    // 获取配置与存储
+    // 獲取配置與儲存
     const adminConfig = await getConfig();
     const storage: IStorage | null = getStorage();
 
@@ -86,12 +86,12 @@ export async function POST(request: NextRequest) {
         (u) => u.username === username
       );
       if (!userEntry || userEntry.role !== 'admin') {
-        return NextResponse.json({ error: '权限不足' }, { status: 401 });
+        return NextResponse.json({ error: '許可權不足' }, { status: 401 });
       }
       operatorRole = 'admin';
     }
 
-    // 查找目标用户条目
+    // 查詢目標使用者條目
     let targetEntry = adminConfig.UserConfig.Users.find(
       (u) => u.username === targetUsername
     );
@@ -101,33 +101,33 @@ export async function POST(request: NextRequest) {
       targetEntry.role === 'owner' &&
       action !== 'changePassword'
     ) {
-      return NextResponse.json({ error: '无法操作站长' }, { status: 400 });
+      return NextResponse.json({ error: '無法操作站長' }, { status: 400 });
     }
 
-    // 权限校验逻辑
+    // 許可權校驗邏輯
     const isTargetAdmin = targetEntry?.role === 'admin';
 
     if (action === 'setAllowRegister') {
       if (typeof allowRegister !== 'boolean') {
-        return NextResponse.json({ error: '参数格式错误' }, { status: 400 });
+        return NextResponse.json({ error: '參數格式錯誤' }, { status: 400 });
       }
       adminConfig.UserConfig.AllowRegister = allowRegister;
-      // 保存后直接返回成功（走后面的统一保存逻辑）
+      // 儲存后直接返回成功（走後面的統一儲存邏輯）
     } else {
       switch (action) {
         case 'add': {
           if (targetEntry) {
-            return NextResponse.json({ error: '用户已存在' }, { status: 400 });
+            return NextResponse.json({ error: '使用者已存在' }, { status: 400 });
           }
           if (!targetPassword) {
             return NextResponse.json(
-              { error: '缺少目标用户密码' },
+              { error: '缺少目標使用者密碼' },
               { status: 400 }
             );
           }
           if (!storage || typeof storage.registerUser !== 'function') {
             return NextResponse.json(
-              { error: '存储未配置用户注册' },
+              { error: '儲存未配置使用者註冊' },
               { status: 500 }
             );
           }
@@ -146,15 +146,15 @@ export async function POST(request: NextRequest) {
         case 'ban': {
           if (!targetEntry) {
             return NextResponse.json(
-              { error: '目标用户不存在' },
+              { error: '目標使用者不存在' },
               { status: 404 }
             );
           }
           if (isTargetAdmin) {
-            // 目标是管理员
+            // 目標是管理員
             if (operatorRole !== 'owner') {
               return NextResponse.json(
-                { error: '仅站长可封禁管理员' },
+                { error: '僅站長可封禁管理員' },
                 { status: 401 }
               );
             }
@@ -165,14 +165,14 @@ export async function POST(request: NextRequest) {
         case 'unban': {
           if (!targetEntry) {
             return NextResponse.json(
-              { error: '目标用户不存在' },
+              { error: '目標使用者不存在' },
               { status: 404 }
             );
           }
           if (isTargetAdmin) {
             if (operatorRole !== 'owner') {
               return NextResponse.json(
-                { error: '仅站长可操作管理员' },
+                { error: '僅站長可操作管理員' },
                 { status: 401 }
               );
             }
@@ -183,19 +183,19 @@ export async function POST(request: NextRequest) {
         case 'setAdmin': {
           if (!targetEntry) {
             return NextResponse.json(
-              { error: '目标用户不存在' },
+              { error: '目標使用者不存在' },
               { status: 404 }
             );
           }
           if (targetEntry.role === 'admin') {
             return NextResponse.json(
-              { error: '该用户已是管理员' },
+              { error: '該使用者已是管理員' },
               { status: 400 }
             );
           }
           if (operatorRole !== 'owner') {
             return NextResponse.json(
-              { error: '仅站长可设置管理员' },
+              { error: '僅站長可設定管理員' },
               { status: 401 }
             );
           }
@@ -205,19 +205,19 @@ export async function POST(request: NextRequest) {
         case 'cancelAdmin': {
           if (!targetEntry) {
             return NextResponse.json(
-              { error: '目标用户不存在' },
+              { error: '目標使用者不存在' },
               { status: 404 }
             );
           }
           if (targetEntry.role !== 'admin') {
             return NextResponse.json(
-              { error: '目标用户不是管理员' },
+              { error: '目標使用者不是管理員' },
               { status: 400 }
             );
           }
           if (operatorRole !== 'owner') {
             return NextResponse.json(
-              { error: '仅站长可取消管理员' },
+              { error: '僅站長可取消管理員' },
               { status: 401 }
             );
           }
@@ -227,18 +227,18 @@ export async function POST(request: NextRequest) {
         case 'changePassword': {
           if (!targetEntry) {
             return NextResponse.json(
-              { error: '目标用户不存在' },
+              { error: '目標使用者不存在' },
               { status: 404 }
             );
           }
           if (!targetPassword) {
-            return NextResponse.json({ error: '缺少新密码' }, { status: 400 });
+            return NextResponse.json({ error: '缺少新密碼' }, { status: 400 });
           }
 
-          // 权限检查：不允许修改站长密码
+          // 許可權檢查：不允許修改站長密碼
           if (targetEntry.role === 'owner') {
             return NextResponse.json(
-              { error: '无法修改站长密码' },
+              { error: '無法修改站長密碼' },
               { status: 401 }
             );
           }
@@ -249,14 +249,14 @@ export async function POST(request: NextRequest) {
             username !== targetUsername
           ) {
             return NextResponse.json(
-              { error: '仅站长可修改其他管理员密码' },
+              { error: '僅站長可修改其他管理員密碼' },
               { status: 401 }
             );
           }
 
           if (!storage || typeof storage.changePassword !== 'function') {
             return NextResponse.json(
-              { error: '存储未配置密码修改功能' },
+              { error: '儲存未配置密碼修改功能' },
               { status: 500 }
             );
           }
@@ -267,36 +267,36 @@ export async function POST(request: NextRequest) {
         case 'deleteUser': {
           if (!targetEntry) {
             return NextResponse.json(
-              { error: '目标用户不存在' },
+              { error: '目標使用者不存在' },
               { status: 404 }
             );
           }
 
-          // 权限检查：站长可删除所有用户（除了自己），管理员可删除普通用户
+          // 許可權檢查：站長可刪除所有使用者（除了自己），管理員可刪除普通使用者
           if (username === targetUsername) {
             return NextResponse.json(
-              { error: '不能删除自己' },
+              { error: '不能刪除自己' },
               { status: 400 }
             );
           }
 
           if (isTargetAdmin && operatorRole !== 'owner') {
             return NextResponse.json(
-              { error: '仅站长可删除管理员' },
+              { error: '僅站長可刪除管理員' },
               { status: 401 }
             );
           }
 
           if (!storage || typeof storage.deleteUser !== 'function') {
             return NextResponse.json(
-              { error: '存储未配置用户删除功能' },
+              { error: '儲存未配置使用者刪除功能' },
               { status: 500 }
             );
           }
 
           await storage.deleteUser(targetUsername!);
 
-          // 从配置中移除用户
+          // 從配置中移除使用者
           const userIndex = adminConfig.UserConfig.Users.findIndex(
             (u) => u.username === targetUsername
           );
@@ -311,7 +311,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 将更新后的配置写入数据库
+    // 將更新后的配置寫入數據庫
     if (storage && typeof (storage as any).setAdminConfig === 'function') {
       await (storage as any).setAdminConfig(adminConfig);
     }
@@ -320,15 +320,15 @@ export async function POST(request: NextRequest) {
       { ok: true },
       {
         headers: {
-          'Cache-Control': 'no-store', // 管理员配置不缓存
+          'Cache-Control': 'no-store', // 管理員配置不快取
         },
       }
     );
   } catch (error) {
-    console.error('用户管理操作失败:', error);
+    console.error('使用者管理操作失敗:', error);
     return NextResponse.json(
       {
-        error: '用户管理操作失败',
+        error: '使用者管理操作失敗',
         details: (error as Error).message,
       },
       { status: 500 }

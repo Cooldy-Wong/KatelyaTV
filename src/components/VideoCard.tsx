@@ -111,7 +111,7 @@ export default function VideoCard({
       : 'tv'
     : type;
 
-  // 获取收藏状态
+  // 獲取收藏狀態
   useEffect(() => {
     if (from === 'douban' || !actualSource || !actualId) return;
 
@@ -120,18 +120,18 @@ export default function VideoCard({
         const fav = await isFavorited(actualSource, actualId);
         setFavorited(fav);
       } catch (err) {
-        throw new Error('检查收藏状态失败');
+        throw new Error('檢查收藏狀態失敗');
       }
     };
 
     fetchFavoriteStatus();
 
-    // 监听收藏状态更新事件
+    // 監聽收藏狀態更新事件
     const storageKey = generateStorageKey(actualSource, actualId);
     const unsubscribe = subscribeToDataUpdates(
       'favoritesUpdated',
       (newFavorites: Record<string, Favorite>) => {
-        // 检查当前项目是否在新的收藏列表中
+        // 檢查目前專案是否在新的收藏列表中
         const isNowFavorited = !!newFavorites[storageKey];
         setFavorited(isNowFavorited);
       }
@@ -147,11 +147,11 @@ export default function VideoCard({
       if (from === 'douban' || !actualSource || !actualId) return;
       try {
         if (favorited) {
-          // 如果已收藏，删除收藏
+          // 如果已收藏，刪除收藏
           await deleteFavorite(actualSource, actualId);
           setFavorited(false);
         } else {
-          // 如果未收藏，添加收藏
+          // 如果未收藏，新增收藏
           await saveFavorite(actualSource, actualId, {
             title: actualTitle,
             source_name: source_name || '',
@@ -163,7 +163,7 @@ export default function VideoCard({
           setFavorited(true);
         }
       } catch (err) {
-        throw new Error('切换收藏状态失败');
+        throw new Error('切換收藏狀態失敗');
       }
     },
     [
@@ -188,7 +188,7 @@ export default function VideoCard({
         await deletePlayRecord(actualSource, actualId);
         onDelete?.();
       } catch (err) {
-        throw new Error('删除播放记录失败');
+        throw new Error('刪除播放記錄失敗');
       }
     },
     [from, actualSource, actualId, onDelete]
@@ -271,11 +271,11 @@ export default function VideoCard({
       className='group relative w-full rounded-lg bg-transparent cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.05] hover:z-[500]'
       onClick={handleClick}
     >
-      {/* 海报容器 */}
+      {/* 海報容器 */}
       <div className='relative aspect-[2/3] overflow-hidden rounded-lg'>
         {/* 骨架屏 */}
         {!isLoading && <ImagePlaceholder aspectRatio='aspect-[2/3]' />}
-        {/* 图片 */}
+        {/* 圖片 */}
         <Image
           src={processImageUrl(actualPoster)}
           alt={actualTitle}
@@ -285,10 +285,10 @@ export default function VideoCard({
           onLoadingComplete={() => setIsLoading(true)}
         />
 
-        {/* 悬浮遮罩 */}
+        {/* 懸浮遮罩 */}
         <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />
 
-        {/* 播放按钮 */}
+        {/* 播放按鈕 */}
         {config.showPlayButton && (
           <div className='absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-300 ease-in-out delay-75 group-hover:opacity-100 group-hover:scale-100'>
             <PlayCircleIcon
@@ -299,7 +299,7 @@ export default function VideoCard({
           </div>
         )}
 
-        {/* 操作按钮 */}
+        {/* 操作按鈕 */}
         {(config.showHeart || config.showCheckCircle) && (
           <div className='absolute bottom-3 right-3 flex gap-3 opacity-0 translate-y-2 transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:translate-y-0'>
             {config.showCheckCircle && (
@@ -338,7 +338,7 @@ export default function VideoCard({
           </div>
         )}
 
-        {/* 豆瓣链接 */}
+        {/* 豆瓣鏈接 */}
         {config.showDoubanLink && actualDoubanId && (
           <a
             href={`https://movie.douban.com/subject/${actualDoubanId}`}
@@ -354,7 +354,7 @@ export default function VideoCard({
         )}
       </div>
 
-      {/* 进度条 */}
+      {/* 進度條 */}
       {config.showProgress && progress !== undefined && (
         <div className='mt-1 h-1 w-full bg-gray-200 rounded-full overflow-hidden'>
           <div
@@ -364,13 +364,13 @@ export default function VideoCard({
         </div>
       )}
 
-      {/* 标题与来源 */}
+      {/* 標題與來源 */}
       <div className='mt-2 text-center'>
         <div className='relative'>
           <span className='block text-sm font-semibold truncate text-gray-900 dark:text-gray-100 transition-colors duration-300 ease-in-out group-hover:text-green-600 dark:group-hover:text-green-400 peer'>
             {actualTitle}
           </span>
-          {/* 自定义 tooltip */}
+          {/* 自定義 tooltip */}
           <div className='absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-gray-800 text-white text-xs rounded-md shadow-lg opacity-0 invisible peer-hover:opacity-100 peer-hover:visible transition-all duration-200 ease-out delay-100 whitespace-nowrap pointer-events-none'>
             {actualTitle}
             <div className='absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800'></div>

@@ -6,12 +6,12 @@ import { searchFromApi } from '@/lib/downstream';
 
 export const runtime = 'edge';
 
-// 处理OPTIONS预检请求（OrionTV客户端需要）
+// 處理OPTIONS預檢請求（OrionTV客戶端需要）
 export async function OPTIONS() {
   return handleOptionsRequest();
 }
 
-// OrionTV 兼容接口
+// OrionTV 相容介面
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q');
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
   if (!query || !resourceId) {
     const cacheTime = await getCacheTime();
     const response = NextResponse.json(
-      { result: null, error: '缺少必要参数: q 或 resourceId' },
+      { result: null, error: '缺少必要參數: q 或 resourceId' },
       {
         headers: {
           'Cache-Control': `public, max-age=${cacheTime}, s-maxage=${cacheTime}`,
@@ -35,12 +35,12 @@ export async function GET(request: Request) {
   const apiSites = await getAvailableApiSites();
 
   try {
-    // 根据 resourceId 查找对应的 API 站点
+    // 根據 resourceId 查詢對應的 API 站點
     const targetSite = apiSites.find((site) => site.key === resourceId);
     if (!targetSite) {
       const response = NextResponse.json(
         {
-          error: `未找到指定的视频源: ${resourceId}`,
+          error: `未找到指定的視訊源: ${resourceId}`,
           result: null,
         },
         { status: 404 }
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
     if (result.length === 0) {
       const response = NextResponse.json(
         {
-          error: '未找到结果',
+          error: '未找到結果',
           result: null,
         },
         { status: 404 }
@@ -77,7 +77,7 @@ export async function GET(request: Request) {
   } catch (error) {
     const response = NextResponse.json(
       {
-        error: '搜索失败',
+        error: '搜索失敗',
         result: null,
       },
       { status: 500 }

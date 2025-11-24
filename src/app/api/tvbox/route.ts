@@ -2,28 +2,28 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getConfig } from '@/lib/config';
 
-// 强制使用 Edge Runtime 以支持 Cloudflare Pages
+// 強制使用 Edge Runtime 以支援 Cloudflare Pages
 export const runtime = 'edge';
 
-// TVBox源格式接口
+// TVBox源格式介面
 interface TVBoxSource {
   key: string;
   name: string;
-  type: number; // 0=影视源, 1=直播源, 3=解析源
+  type: number; // 0=影視源, 1=直播源, 3=解析源
   api: string;
   searchable?: number; // 0=不可搜索, 1=可搜索
-  quickSearch?: number; // 0=不支持快速搜索, 1=支持快速搜索
-  filterable?: number; // 0=不支持分类筛选, 1=支持分类筛选
-  ext?: string; // 扩展参数
+  quickSearch?: number; // 0=不支援快速搜索, 1=支援快速搜索
+  filterable?: number; // 0=不支援分類篩選, 1=支援分類篩選
+  ext?: string; // 擴充套件參數
   jar?: string; // jar包地址
   playUrl?: string; // 播放解析地址
-  categories?: string[]; // 分类
-  timeout?: number; // 超时时间(秒)
+  categories?: string[]; // 分類
+  timeout?: number; // 超時時間(秒)
 }
 
 interface TVBoxConfig {
-  spider?: string; // 爬虫jar包地址
-  wallpaper?: string; // 壁纸地址
+  spider?: string; // 爬蟲jar包地址
+  wallpaper?: string; // 壁紙地址
   lives?: Array<{
     name: string;
     type: number;
@@ -31,7 +31,7 @@ interface TVBoxConfig {
     epg?: string;
     logo?: string;
   }>; // 直播源
-  sites: TVBoxSource[]; // 影视源
+  sites: TVBoxSource[]; // 影視源
   parses?: Array<{
     name: string;
     type: number;
@@ -39,79 +39,79 @@ interface TVBoxConfig {
     ext?: Record<string, unknown>;
     header?: Record<string, string>;
   }>; // 解析源
-  flags?: string[]; // 播放标识
+  flags?: string[]; // 播放標識
   ijk?: Record<string, unknown>; // IJK播放器配置
-  ads?: string[]; // 广告过滤规则
+  ads?: string[]; // 廣告過濾規則
 }
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const format = searchParams.get('format') || 'json'; // 支持json和base64格式
+    const format = searchParams.get('format') || 'json'; // 支援json和base64格式
     const host = request.headers.get('host') || 'localhost:3000';
     const protocol = request.headers.get('x-forwarded-proto') || 'http';
     const baseUrl = `${protocol}://${host}`;
 
-    // 读取当前配置
+    // 讀取目前配置
     const config = await getConfig();
     
-    // 从配置中获取源站列表
+    // 從配置中獲取源站列表
     const sourceConfigs = config.SourceConfig || [];
     
     if (sourceConfigs.length === 0) {
-      return NextResponse.json({ error: '没有配置任何视频源' }, { status: 500 });
+      return NextResponse.json({ error: '沒有配置任何視訊源' }, { status: 500 });
     }
 
-    // 转换为TVBox格式
+    // 轉換為TVBox格式
     const tvboxConfig: TVBoxConfig = {
-      // 基础配置
-      spider: '', // 可以根据需要添加爬虫jar包
-      wallpaper: `${baseUrl}/screenshot1.png`, // 使用项目截图作为壁纸
+      // 基礎配置
+      spider: '', // 可以根據需要新增爬蟲jar包
+      wallpaper: `${baseUrl}/screenshot1.png`, // 使用專案截圖作為壁紙
       
-      // 影视源配置
+      // 影視源配置
       sites: sourceConfigs.map((source) => {
-        // 更智能的type判断逻辑：
-        // 1. 如果api地址包含 "/provide/vod" 且不包含 "at/xml"，则认为是JSON类型 (type=1)
-        // 2. 如果api地址包含 "at/xml"，则认为是XML类型 (type=0)
-        // 3. 如果api地址以 ".json" 结尾，则认为是JSON类型 (type=1)
-        // 4. 其他情况默认为JSON类型 (type=1)，因为现在大部分都是JSON
-        let type = 1; // 默认为JSON类型
+        // 更智慧的type判斷邏輯：
+        // 1. 如果api地址包含 "/provide/vod" 且不包含 "at/xml"，則認為是JSON型別 (type=1)
+        // 2. 如果api地址包含 "at/xml"，則認為是XML型別 (type=0)
+        // 3. 如果api地址以 ".json" 結尾，則認為是JSON型別 (type=1)
+        // 4. 其他情況預設為JSON型別 (type=1)，因為現在大部分都是JSON
+        let type = 1; // 預設為JSON型別
         
         const apiLower = source.api.toLowerCase();
         if (apiLower.includes('at/xml') || apiLower.endsWith('.xml')) {
-          type = 0; // XML类型
+          type = 0; // XML型別
         }
         
         return {
           key: source.key || source.name,
           name: source.name,
-          type: type, // 使用智能判断的type
+          type: type, // 使用智慧判斷的type
           api: source.api,
           searchable: 1, // 可搜索
-          quickSearch: 1, // 支持快速搜索
-          filterable: 1, // 支持分类筛选
-          ext: source.detail || '', // 详情页地址作为扩展参数
-          timeout: 30, // 30秒超时
+          quickSearch: 1, // 支援快速搜索
+          filterable: 1, // 支援分類篩選
+          ext: source.detail || '', // 詳情頁地址作為擴充套件參數
+          timeout: 30, // 30秒超時
           categories: [
-            "电影", "电视剧", "综艺", "动漫", "纪录片", "短剧"
+            "電影", "電視劇", "綜藝", "動漫", "紀錄片", "短劇"
           ]
         };
       }),
 
-      // 解析源配置（添加一些常用的解析源）
+      // 解析源配置（新增一些常用的解析源）
       parses: [
         {
-          name: "Json并发",
+          name: "Json併發",
           type: 2,
           url: "Parallel"
         },
         {
-          name: "Json轮询",
+          name: "Json輪詢",
           type: 2, 
           url: "Sequence"
         },
         {
-          name: "KatelyaTV内置解析",
+          name: "KatelyaTV內建解析",
           type: 1,
           url: `${baseUrl}/api/parse?url=`,
           ext: {
@@ -120,15 +120,15 @@ export async function GET(request: NextRequest) {
         }
       ],
 
-      // 播放标识
+      // 播放標識
       flags: [
         "youku", "qq", "iqiyi", "qiyi", "letv", "sohu", "tudou", "pptv", 
         "mgtv", "wasu", "bilibili", "le", "duoduozy", "renrenmi", "xigua",
-        "优酷", "腾讯", "爱奇艺", "奇艺", "乐视", "搜狐", "土豆", "PPTV",
-        "芒果", "华数", "哔哩", "1905"
+        "優酷", "騰訊", "愛奇藝", "奇藝", "樂視", "搜狐", "土豆", "PPTV",
+        "芒果", "華數", "嗶哩", "1905"
       ],
 
-      // 直播源（可选）
+      // 直播源（可選）
       lives: [
         {
           name: "KatelyaTV直播",
@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
         }
       ],
 
-      // 广告过滤规则
+      // 廣告過濾規則
       ads: [
         "mimg.0c1q0l.cn",
         "www.googletagmanager.com", 
@@ -201,9 +201,9 @@ export async function GET(request: NextRequest) {
       ]
     };
 
-    // 根据format参数返回不同格式
+    // 根據format參數返回不同格式
     if (format === 'txt') {
-      // 返回base64编码的配置（TVBox常用格式）
+      // 返回base64編碼的配置（TVBox常用格式）
       const configStr = JSON.stringify(tvboxConfig, null, 2);
       const base64Config = Buffer.from(configStr).toString('base64');
       
@@ -230,13 +230,13 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     return NextResponse.json(
-      { error: 'TVBox配置生成失败', details: error instanceof Error ? error.message : String(error) },
+      { error: 'TVBox配置產生失敗', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
 }
 
-// 支持CORS预检请求
+// 支援CORS預檢請求
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,

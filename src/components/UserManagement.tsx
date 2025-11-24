@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
-// 临时内联认证函数，避免导入问题
+// 臨時內聯認證函式，避免匯入問題
 function getAuthInfoFromBrowserCookie(): {
   password?: string;
   username?: string;
@@ -49,13 +49,13 @@ export default function UserManagement() {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
 
   useEffect(() => {
-    // 获取当前用户信息
+    // 獲取目前使用者資訊
     const authInfo = getAuthInfoFromBrowserCookie();
     if (authInfo?.username) {
       setCurrentUser(authInfo.username);
       loadUsers();
     } else {
-      setError('未登录或权限不足');
+      setError('未登錄或許可權不足');
       setLoading(false);
     }
   }, []);
@@ -64,7 +64,7 @@ export default function UserManagement() {
     try {
       const authInfo = getAuthInfoFromBrowserCookie();
       if (!authInfo?.username) {
-        throw new Error('未获取到用户认证信息');
+        throw new Error('未獲取到使用者認證資訊');
       }
 
       const response = await fetch('/api/admin/users', {
@@ -76,14 +76,14 @@ export default function UserManagement() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || '获取用户列表失败');
+        throw new Error(errorData.error || '獲取使用者列表失敗');
       }
 
       const data = await response.json();
       setUsers(data.users || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '未知错误');
-      console.error('加载用户列表失败:', err);
+      setError(err instanceof Error ? err.message : '未知錯誤');
+      console.error('載入使用者列表失敗:', err);
     } finally {
       setLoading(false);
     }
@@ -93,7 +93,7 @@ export default function UserManagement() {
     try {
       const authInfo = getAuthInfoFromBrowserCookie();
       if (!authInfo?.username) {
-        throw new Error('未获取到用户认证信息');
+        throw new Error('未獲取到使用者認證資訊');
       }
 
       const response = await fetch('/api/admin/users', {
@@ -111,29 +111,29 @@ export default function UserManagement() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || '操作失败');
+        throw new Error(errorData.error || '操作失敗');
       }
 
       const data = await response.json();
       alert(data.message || '操作成功');
       
-      // 重新加载用户列表
+      // 重新載入使用者列表
       await loadUsers();
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : '未知错误';
-      alert(`操作失败: ${errorMsg}`);
-      console.error('用户管理操作失败:', err);
+      const errorMsg = err instanceof Error ? err.message : '未知錯誤';
+      alert(`操作失敗: ${errorMsg}`);
+      console.error('使用者管理操作失敗:', err);
     }
   };
 
   const handleForceFilter = (username: string) => {
-    if (confirm(`确定要强制开启用户 ${username} 的成人内容过滤功能吗？`)) {
+    if (confirm(`確定要強制開啟使用者 ${username} 的成人內容過濾功能嗎？`)) {
       updateUserSettings(username, 'force_filter');
     }
   };
 
   const handleAllowDisable = (username: string) => {
-    if (confirm(`确定要允许用户 ${username} 自己管理过滤设置吗？`)) {
+    if (confirm(`確定要允許使用者 ${username} 自己管理過濾設定嗎？`)) {
       updateUserSettings(username, 'allow_disable');
     }
   };
@@ -154,7 +154,7 @@ export default function UserManagement() {
           onClick={loadUsers}
           className="mt-2 text-sm text-red-600 dark:text-red-400 underline hover:no-underline"
         >
-          重试
+          重試
         </button>
       </div>
     );
@@ -164,10 +164,10 @@ export default function UserManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-          用户管理
+          使用者管理
         </h2>
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          总计 {users.length} 个用户
+          總計 {users.length} 個使用者
         </div>
       </div>
 
@@ -177,16 +177,16 @@ export default function UserManagement() {
             <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  用户名
+                  使用者名稱
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   角色
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  成人内容过滤
+                  成人內容過濾
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  管理状态
+                  管理狀態
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   操作
@@ -203,7 +203,7 @@ export default function UserManagement() {
                       </div>
                       {user.username === currentUser && (
                         <span className="ml-2 px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">
-                          当前用户
+                          目前使用者
                         </span>
                       )}
                     </div>
@@ -214,7 +214,7 @@ export default function UserManagement() {
                         ? 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200'
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
                     }`}>
-                      {user.role === 'owner' ? '站长' : '用户'}
+                      {user.role === 'owner' ? '站長' : '使用者'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -224,15 +224,15 @@ export default function UserManagement() {
                           ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
                           : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
                       }`}>
-                        {user.filter_adult_content ? '已开启' : '已关闭'}
+                        {user.filter_adult_content ? '已開啟' : '已關閉'}
                       </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                     {user.managed_by_admin ? (
-                      <span className="text-orange-600 dark:text-orange-400">管理员控制</span>
+                      <span className="text-orange-600 dark:text-orange-400">管理員控制</span>
                     ) : user.can_disable_filter ? (
-                      <span className="text-green-600 dark:text-green-400">用户自主</span>
+                      <span className="text-green-600 dark:text-green-400">使用者自主</span>
                     ) : (
                       <span className="text-gray-600 dark:text-gray-400">受限制</span>
                     )}
@@ -245,7 +245,7 @@ export default function UserManagement() {
                             onClick={() => handleForceFilter(user.username)}
                             className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
                           >
-                            强制过滤
+                            強制過濾
                           </button>
                         ) : null}
                         {user.managed_by_admin || !user.can_disable_filter ? (
@@ -253,7 +253,7 @@ export default function UserManagement() {
                             onClick={() => handleAllowDisable(user.username)}
                             className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300"
                           >
-                            允许自主
+                            允許自主
                           </button>
                         ) : null}
                       </div>
@@ -267,20 +267,20 @@ export default function UserManagement() {
 
         {users.length === 0 && (
           <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-            暂无用户数据
+            暫無用戶數據
           </div>
         )}
       </div>
 
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4">
         <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">
-          说明
+          說明
         </h3>
         <ul className="text-sm text-blue-600 dark:text-blue-300 space-y-1">
-          <li>• <strong>强制过滤</strong>：开启用户的成人内容过滤，用户无法自己关闭</li>
-          <li>• <strong>允许自主</strong>：允许用户自己管理成人内容过滤设置</li>
-          <li>• 站长账户默认具有所有权限，无法被其他用户管理</li>
-          <li>• 管理员控制的用户无法在用户设置中关闭成人内容过滤</li>
+          <li>• <strong>強制過濾</strong>：開啟使用者的成人內容過濾，使用者無法自己關閉</li>
+          <li>• <strong>允許自主</strong>：允許使用者自己管理成人內容過濾設定</li>
+          <li>• 站長賬戶預設具有所有許可權，無法被其他使用者管理</li>
+          <li>• 管理員控制的使用者無法在使用者設定中關閉成人內容過濾</li>
         </ul>
       </div>
     </div>

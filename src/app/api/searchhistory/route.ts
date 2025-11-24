@@ -7,7 +7,7 @@ import { db } from '@/lib/db';
 
 export const runtime = 'edge';
 
-// 最大保存条数（与客户端保持一致）
+// 最大儲存條數（與客戶端保持一致）
 const HISTORY_LIMIT = 20;
 
 /**
@@ -16,7 +16,7 @@ const HISTORY_LIMIT = 20;
  */
 export async function GET(request: NextRequest) {
   try {
-    // 从 cookie 获取用户信息
+    // 從 cookie 獲取使用者資訊
     const authInfo = getAuthInfoFromCookie(request);
     if (!authInfo || !authInfo.username) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     const history = await db.getSearchHistory(authInfo.username);
     return NextResponse.json(history, { status: 200 });
   } catch (err) {
-    console.error('获取搜索历史失败', err);
+    console.error('獲取搜索歷史失敗', err);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    // 从 cookie 获取用户信息
+    // 從 cookie 獲取使用者資訊
     const authInfo = getAuthInfoFromCookie(request);
     if (!authInfo || !authInfo.username) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -57,11 +57,11 @@ export async function POST(request: NextRequest) {
 
     await db.addSearchHistory(authInfo.username, keyword);
 
-    // 再次获取最新列表，确保客户端与服务端同步
+    // 再次獲取最新列表，確保客戶端與服務端同步
     const history = await db.getSearchHistory(authInfo.username);
     return NextResponse.json(history.slice(0, HISTORY_LIMIT), { status: 200 });
   } catch (err) {
-    console.error('添加搜索历史失败', err);
+    console.error('新增搜索歷史失敗', err);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -72,12 +72,12 @@ export async function POST(request: NextRequest) {
 /**
  * DELETE /api/searchhistory?keyword=<kw>
  *
- * 1. 不带 keyword -> 清空全部搜索历史
- * 2. 带 keyword=<kw> -> 删除单条关键字
+ * 1. 不帶 keyword -> 清空全部搜索歷史
+ * 2. 帶 keyword=<kw> -> 刪除單條關鍵字
  */
 export async function DELETE(request: NextRequest) {
   try {
-    // 从 cookie 获取用户信息
+    // 從 cookie 獲取使用者資訊
     const authInfo = getAuthInfoFromCookie(request);
     if (!authInfo || !authInfo.username) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -90,7 +90,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err) {
-    console.error('删除搜索历史失败', err);
+    console.error('刪除搜索歷史失敗', err);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

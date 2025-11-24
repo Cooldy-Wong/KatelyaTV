@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   if (storageType === 'localstorage') {
     return NextResponse.json(
       {
-        error: '不支持本地存储进行管理员配置',
+        error: '不支援本地儲存進行管理員配置',
       },
       { status: 400 }
     );
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   const username = authInfo.username;
 
   if (username !== process.env.USERNAME) {
-    return NextResponse.json({ error: '仅支持站长重置配置' }, { status: 401 });
+    return NextResponse.json({ error: '僅支援站長重置配置' }, { status: 401 });
   }
 
   try {
@@ -35,14 +35,14 @@ export async function GET(request: NextRequest) {
       { ok: true },
       {
         headers: {
-          'Cache-Control': 'no-store', // 管理员配置不缓存
+          'Cache-Control': 'no-store', // 管理員配置不快取
         },
       }
     );
   } catch (error) {
     return NextResponse.json(
       {
-        error: '重置管理员配置失败',
+        error: '重置管理員配置失敗',
         details: (error as Error).message,
       },
       { status: 500 }

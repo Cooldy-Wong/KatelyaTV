@@ -7,7 +7,7 @@ import { getAuthInfoFromCookie } from '@/lib/auth';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 跳过不需要认证的路径
+  // 跳過不需要認證的路徑
   if (shouldSkipAuth(pathname)) {
     return NextResponse.next();
   }
@@ -15,19 +15,19 @@ export async function middleware(request: NextRequest) {
   const storageType = process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage';
 
   if (!process.env.AUTH_PASSWORD) {
-    // 如果没有设置密码，重定向到警告页面
+    // 如果沒有設定密碼，重定向到警告頁面
     const warningUrl = new URL('/warning', request.url);
     return NextResponse.redirect(warningUrl);
   }
 
-  // 从cookie获取认证信息
+  // 從cookie獲取認證資訊
   const authInfo = getAuthInfoFromCookie(request);
 
   if (!authInfo) {
     return handleAuthFailure(request, pathname);
   }
 
-  // localstorage模式：在middleware中完成验证
+  // localstorage模式：在middleware中完成驗證
   if (storageType === 'localstorage') {
     if (!authInfo.password || authInfo.password !== process.env.AUTH_PASSWORD) {
       return handleAuthFailure(request, pathname);
@@ -35,13 +35,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 其他模式：只验证签名
-  // 检查是否有用户名（非localStorage模式下密码不存储在cookie中）
+  // 其他模式：只驗證簽名
+  // 檢查是否有使用者名稱（非localStorage模式下密碼不儲存在cookie中）
   if (!authInfo.username || !authInfo.signature) {
     return handleAuthFailure(request, pathname);
   }
 
-  // 验证签名（如果存在）
+  // 驗證簽名（如果存在）
   if (authInfo.signature) {
     const isValidSignature = await verifySignature(
       authInfo.username,
@@ -49,17 +49,17 @@ export async function middleware(request: NextRequest) {
       process.env.AUTH_PASSWORD || ''
     );
 
-    // 签名验证通过即可
+    // 簽名驗證通過即可
     if (isValidSignature) {
       return NextResponse.next();
     }
   }
 
-  // 签名验证失败或不存在签名
+  // 簽名驗證失敗或不存在簽名
   return handleAuthFailure(request, pathname);
 }
 
-// 验证签名
+// 驗證簽名
 async function verifySignature(
   data: string,
   signature: string,
@@ -70,7 +70,7 @@ async function verifySignature(
   const messageData = encoder.encode(data);
 
   try {
-    // 导入密钥
+    // 匯入金鑰
     const key = await crypto.subtle.importKey(
       'raw',
       keyData,
@@ -79,12 +79,12 @@ async function verifySignature(
       ['verify']
     );
 
-    // 将十六进制字符串转换为Uint8Array
+    // 將十六進制字串轉換為Uint8Array
     const signatureBuffer = new Uint8Array(
       signature.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || []
     );
 
-    // 验证签名
+    // 驗證簽名
     return await crypto.subtle.verify(
       'HMAC',
       key,
@@ -92,30 +92,30 @@ async function verifySignature(
       messageData
     );
   } catch (error) {
-    console.error('签名验证失败:', error);
+    console.error('簽名驗證失敗:', error);
     return false;
   }
 }
 
-// 处理认证失败的情况
+// 處理認證失敗的情況
 function handleAuthFailure(
   request: NextRequest,
   pathname: string
 ): NextResponse {
-  // 如果是 API 路由，返回 401 状态码
+  // 如果是 API 路由，返回 401 狀態碼
   if (pathname.startsWith('/api')) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
 
-  // 否则重定向到登录页面
+  // 否則重定向到登錄頁面
   const loginUrl = new URL('/login', request.url);
-  // 保留完整的URL，包括查询参数
+  // 保留完整的URL，包括查詢參數
   const fullUrl = `${pathname}${request.nextUrl.search}`;
   loginUrl.searchParams.set('redirect', fullUrl);
   return NextResponse.redirect(loginUrl);
 }
 
-// 判断是否需要跳过认证的路径
+// 判斷是否需要跳過認證的路徑
 function shouldSkipAuth(pathname: string): boolean {
   const skipPaths = [
     '/_next',
@@ -130,7 +130,7 @@ function shouldSkipAuth(pathname: string): boolean {
   return skipPaths.some((path) => pathname.startsWith(path));
 }
 
-// 配置middleware匹配规则
+// 配置middleware匹配規則
 export const config = {
   matcher: [
     '/((?!_next/static|_next/image|favicon.ico|login|warning|api/login|api/register|api/logout|api/cron|api/server-config|api/search|api/detail|api/image-proxy|api/tvbox).*)',

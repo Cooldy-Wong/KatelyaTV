@@ -10,7 +10,7 @@ export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
   try {
-    // 从 cookie 获取用户信息
+    // 從 cookie 獲取使用者資訊
     const authInfo = getAuthInfoFromCookie(request);
     if (!authInfo || !authInfo.username) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     const records = await db.getAllPlayRecords(authInfo.username);
     return NextResponse.json(records, { status: 200 });
   } catch (err) {
-    console.error('获取播放记录失败', err);
+    console.error('獲取播放記錄失敗', err);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // 从 cookie 获取用户信息
+    // 從 cookie 獲取使用者資訊
     const authInfo = getAuthInfoFromCookie(request);
     if (!authInfo || !authInfo.username) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 验证播放记录数据
+    // 驗證播放記錄數據
     if (!record.title || !record.source_name || record.index < 1) {
       return NextResponse.json(
         { error: 'Invalid record data' },
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 从key中解析source和id
+    // 從key中解析source和id
     const [source, id] = key.split('+');
     if (!source || !id) {
       return NextResponse.json(
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err) {
-    console.error('保存播放记录失败', err);
+    console.error('儲存播放記錄失敗', err);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    // 从 cookie 获取用户信息
+    // 從 cookie 獲取使用者資訊
     const authInfo = getAuthInfoFromCookie(request);
     if (!authInfo || !authInfo.username) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -92,7 +92,7 @@ export async function DELETE(request: NextRequest) {
     const key = searchParams.get('key');
 
     if (key) {
-      // 如果提供了 key，删除单条播放记录
+      // 如果提供了 key，刪除單條播放記錄
       const [source, id] = key.split('+');
       if (!source || !id) {
         return NextResponse.json(
@@ -103,8 +103,8 @@ export async function DELETE(request: NextRequest) {
 
       await db.deletePlayRecord(username, source, id);
     } else {
-      // 未提供 key，则清空全部播放记录
-      // 目前 DbManager 没有对应方法，这里直接遍历删除
+      // 未提供 key，則清空全部播放記錄
+      // 目前 DbManager 沒有對應方法，這裡直接遍歷刪除
       const all = await db.getAllPlayRecords(username);
       await Promise.all(
         Object.keys(all).map(async (k) => {
@@ -116,7 +116,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err) {
-    console.error('删除播放记录失败', err);
+    console.error('刪除播放記錄失敗', err);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

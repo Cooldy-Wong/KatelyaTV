@@ -6,7 +6,7 @@ import { User } from '@/lib/types';
 
 export const runtime = 'edge';
 
-// 检查是否为站长账户
+// 檢查是否為站長賬戶
 function isOwnerAccount(username: string): boolean {
   const ownerUsername = process.env.USERNAME || 'admin';
   return username === ownerUsername;
@@ -14,20 +14,20 @@ function isOwnerAccount(username: string): boolean {
 
 export async function GET(request: NextRequest) {
   try {
-    // 从Authorization头获取当前用户
+    // 從Authorization頭獲取目前使用者
     const auth = request.headers.get('Authorization')?.replace('Bearer ', '');
     if (!auth) {
-      return NextResponse.json({ error: '需要认证' }, { status: 401 });
+      return NextResponse.json({ error: '需要認證' }, { status: 401 });
     }
 
     const currentUsername = decodeURIComponent(auth);
     
-    // 检查是否为站长账户
+    // 檢查是否為站長賬戶
     if (!isOwnerAccount(currentUsername)) {
-      return NextResponse.json({ error: '权限不足' }, { status: 403 });
+      return NextResponse.json({ error: '許可權不足' }, { status: 403 });
     }
 
-    // 获取所有用户及其设置
+    // 獲取所有使用者及其設定
     const storage = getStorage();
     const users: User[] = await storage.getAllUsers();
     const usersWithSettings = await Promise.all(
@@ -51,24 +51,24 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('获取用户列表失败:', error);
-    return NextResponse.json({ error: '获取用户列表失败' }, { status: 500 });
+    console.error('獲取使用者列表失敗:', error);
+    return NextResponse.json({ error: '獲取使用者列表失敗' }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // 从Authorization头获取当前用户
+    // 從Authorization頭獲取目前使用者
     const auth = request.headers.get('Authorization')?.replace('Bearer ', '');
     if (!auth) {
-      return NextResponse.json({ error: '需要认证' }, { status: 401 });
+      return NextResponse.json({ error: '需要認證' }, { status: 401 });
     }
 
     const currentUsername = decodeURIComponent(auth);
     
-    // 检查是否为站长账户
+    // 檢查是否為站長賬戶
     if (!isOwnerAccount(currentUsername)) {
-      return NextResponse.json({ error: '权限不足' }, { status: 403 });
+      return NextResponse.json({ error: '許可權不足' }, { status: 403 });
     }
 
     const storage = getStorage();
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case 'update_settings': {
-        // 更新用户设置
+        // 更新使用者設定
         const currentSettings = await storage.getUserSettings(username);
         const newSettings = {
           ...currentSettings,
@@ -88,12 +88,12 @@ export async function POST(request: NextRequest) {
         
         return NextResponse.json({ 
           success: true,
-          message: `已更新用户 ${username} 的设置` 
+          message: `已更新使用者 ${username} 的設定` 
         });
       }
 
       case 'force_filter': {
-        // 强制开启某用户的成人内容过滤
+        // 強制開啟某使用者的成人內容過濾
         const currentSettings = await storage.getUserSettings(username) || {
           filter_adult_content: true,
           theme: 'auto' as const,
@@ -112,12 +112,12 @@ export async function POST(request: NextRequest) {
         
         return NextResponse.json({ 
           success: true,
-          message: `已强制开启用户 ${username} 的成人内容过滤` 
+          message: `已強制開啟使用者 ${username} 的成人內容過濾` 
         });
       }
 
       case 'allow_disable': {
-        // 允许用户自己管理过滤设置
+        // 允許使用者自己管理過濾設定
         const existingSettings = await storage.getUserSettings(username) || {
           filter_adult_content: true,
           theme: 'auto' as const,
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
         
         return NextResponse.json({ 
           success: true,
-          message: `已允许用户 ${username} 自己管理过滤设置` 
+          message: `已允許使用者 ${username} 自己管理過濾設定` 
         });
       }
 
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('用户管理操作失败:', error);
-    return NextResponse.json({ error: '操作失败' }, { status: 500 });
+    console.error('使用者管理操作失敗:', error);
+    return NextResponse.json({ error: '操作失敗' }, { status: 500 });
   }
 }

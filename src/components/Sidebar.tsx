@@ -24,7 +24,7 @@ const SidebarContext = createContext<SidebarContextType>({
 
 export const useSidebar = () => useContext(SidebarContext);
 
-// Logo 组件 - 应用彩虹渐变效果
+// Logo 元件 - 應用彩虹漸變效果
 const Logo = () => {
   const { siteName } = useSite();
   return (
@@ -44,7 +44,7 @@ interface SidebarProps {
   activePath?: string;
 }
 
-// 在浏览器环境下通过全局变量缓存折叠状态，避免组件重新挂载时出现初始值闪烁
+// 在瀏覽器環境下通過全域性變數快取摺疊狀態，避免元件重新掛載時出現初始值閃爍
 declare global {
   interface Window {
     __sidebarCollapsed?: boolean;
@@ -55,7 +55,7 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  // 若同一次 SPA 会话中已经读取过折叠状态，则直接复用，避免闪烁
+  // 若同一次 SPA 會話中已經讀取過摺疊狀態，則直接複用，避免閃爍
   const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
     if (
       typeof window !== 'undefined' &&
@@ -63,10 +63,10 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
     ) {
       return window.__sidebarCollapsed;
     }
-    return false; // 默认展开
+    return false; // 預設展開
   });
 
-  // 首次挂载时读取 localStorage，以便刷新后仍保持上次的折叠状态
+  // 首次掛載時讀取 localStorage，以便重新整理后仍保持上次的摺疊狀態
   useLayoutEffect(() => {
     const saved = localStorage.getItem('sidebarCollapsed');
     if (saved !== null) {
@@ -76,7 +76,7 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
     }
   }, []);
 
-  // 当折叠状态变化时，同步到 <html> data 属性，供首屏 CSS 使用
+  // 當摺疊狀態變化時，同步到 <html> data 屬性，供首屏 CSS 使用
   useLayoutEffect(() => {
     if (typeof document !== 'undefined') {
       if (isCollapsed) {
@@ -90,11 +90,11 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
   const [active, setActive] = useState(activePath);
 
   useEffect(() => {
-    // 优先使用传入的 activePath
+    // 優先使用傳入的 activePath
     if (activePath) {
       setActive(activePath);
     } else {
-      // 否则使用当前路径
+      // 否則使用目前路徑
       const getCurrentFullPath = () => {
         const queryString = searchParams.toString();
         return queryString ? `${pathname}?${queryString}` : pathname;
@@ -125,17 +125,17 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
   const menuItems = [
     {
       icon: Film,
-      label: '电影',
+      label: '電影',
       href: '/douban?type=movie',
     },
     {
       icon: Tv,
-      label: '剧集',
+      label: '劇集',
       href: '/douban?type=tv',
     },
     {
       icon: Clover,
-      label: '综艺',
+      label: '綜藝',
       href: '/douban?type=show',
     },
     {
@@ -147,7 +147,7 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
 
   return (
     <SidebarContext.Provider value={contextValue}>
-      {/* 在移动端隐藏侧边栏 */}
+      {/* 在移動端隱藏側邊欄 */}
       <div className='hidden md:flex'>
         <aside
           data-sidebar
@@ -160,7 +160,7 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
           }}
         >
           <div className='flex h-full flex-col'>
-            {/* 顶部 Logo 区域 */}
+            {/* 頂部 Logo 區域 */}
             <div className='relative h-16'>
               <div
                 className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${
@@ -181,7 +181,7 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
               </button>
             </div>
 
-            {/* 首页和搜索导航 */}
+            {/* 首頁和搜索導航 */}
             <nav className='px-2 mt-4 space-y-1'>
               <Link
                 href='/'
@@ -196,7 +196,7 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
                 </div>
                 {!isCollapsed && (
                   <span className='whitespace-nowrap transition-opacity duration-200 opacity-100'>
-                    首页
+                    首頁
                   </span>
                 )}
               </Link>
@@ -223,15 +223,15 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
               </Link>
             </nav>
 
-            {/* 菜单项 */}
+            {/* 菜單項 */}
             <div className='flex-1 overflow-y-auto px-2 pt-4'>
               <div className='space-y-1'>
                 {menuItems.map((item) => {
-                  // 检查当前路径是否匹配这个菜单项
+                  // 檢查目前路徑是否匹配這個菜單項
                   const typeMatch = item.href.match(/type=([^&]+)/)?.[1];
                   const tagMatch = item.href.match(/tag=([^&]+)/)?.[1];
 
-                  // 解码URL以进行正确的比较
+                  // 解碼URL以進行正確的比較
                   const decodedActive = decodeURIComponent(active);
                   const decodedItemHref = decodeURIComponent(item.href);
 

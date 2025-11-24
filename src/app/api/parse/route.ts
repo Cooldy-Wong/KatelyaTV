@@ -1,22 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// 强制使用 Edge Runtime 以支持 Cloudflare Pages
+// 強制使用 Edge Runtime 以支援 Cloudflare Pages
 export const runtime = 'edge';
 
-// 常用的视频解析接口列表
+// 常用的視訊解析介面列表
 const PARSE_APIS = [
   {
-    name: '无名小站',
+    name: '無名小站',
     url: 'https://jx.aidouer.net/?url=',
     support: ['qq', 'iqiyi', 'youku', 'mgtv', 'bilibili']
   },
   {
-    name: '虾米解析',
+    name: '蝦米解析',
     url: 'https://jx.xmflv.com/?url=',
     support: ['qq', 'iqiyi', 'youku', 'mgtv', 'bilibili', 'sohu']
   },
   {
-    name: '爱豆解析',
+    name: '愛豆解析',
     url: 'https://jx.aidouer.net/?url=',
     support: ['qq', 'iqiyi', 'youku', 'mgtv', 'bilibili']
   },
@@ -32,7 +32,7 @@ const PARSE_APIS = [
   }
 ];
 
-// 检测视频URL的平台类型
+// 檢測視訊URL的平臺型別
 function detectPlatform(url: string): string {
   if (url.includes('qq.com') || url.includes('v.qq.com')) return 'qq';
   if (url.includes('iqiyi.com') || url.includes('qiyi.com')) return 'iqiyi';
@@ -47,7 +47,7 @@ function detectPlatform(url: string): string {
   return 'unknown';
 }
 
-// 获取适用的解析接口
+// 獲取適用的解析介面
 function getCompatibleParsers(platform: string) {
   return PARSE_APIS.filter(api => 
     api.support.includes(platform) || platform === 'unknown'
@@ -63,19 +63,19 @@ export async function GET(request: NextRequest) {
 
     if (!url) {
       return NextResponse.json(
-        { error: '缺少url参数' },
+        { error: '缺少url參數' },
         { status: 400 }
       );
     }
 
-    // 检测平台类型
+    // 檢測平臺型別
     const platform = detectPlatform(url);
     const compatibleParsers = getCompatibleParsers(platform);
 
     if (compatibleParsers.length === 0) {
       return NextResponse.json(
         { 
-          error: '暂不支持该平台的视频解析',
+          error: '暫不支援該平臺的視訊解析',
           platform,
           url 
         },
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 如果指定了解析器，优先使用
+    // 如果指定了解析器，優先使用
     let selectedParser = compatibleParsers[0];
     if (parser) {
       const customParser = PARSE_APIS.find(api => 
@@ -96,18 +96,18 @@ export async function GET(request: NextRequest) {
 
     const parseUrl = selectedParser.url + encodeURIComponent(url);
 
-    // 根据format返回不同格式
+    // 根據format返回不同格式
     if (format === 'redirect') {
-      // 直接重定向到解析页面
+      // 直接重定向到解析頁面
       return NextResponse.redirect(parseUrl);
     } else if (format === 'iframe') {
-      // 返回可嵌入的HTML页面
+      // 返回可嵌入的HTML頁面
       const html = `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>视频播放</title>
+    <title>視訊播放</title>
     <style>
         body { margin: 0; padding: 0; background: #000; }
         iframe { width: 100%; height: 100vh; border: none; }
@@ -124,7 +124,7 @@ export async function GET(request: NextRequest) {
         }
       });
     } else {
-      // 返回JSON格式的解析信息
+      // 返回JSON格式的解析資訊
       return NextResponse.json({
         success: true,
         data: {
@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'GET',
           'Access-Control-Allow-Headers': 'Content-Type',
-          'Cache-Control': 'public, max-age=300' // 5分钟缓存
+          'Cache-Control': 'public, max-age=300' // 5分鐘快取
         }
       });
     }
@@ -147,7 +147,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { 
-        error: '视频解析失败',
+        error: '視訊解析失敗',
         details: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// 支持CORS预检请求
+// 支援CORS預檢請求
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,

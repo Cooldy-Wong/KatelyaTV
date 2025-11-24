@@ -15,7 +15,7 @@ interface PageLayoutProps {
   activePath?: string;
 }
 
-// 内联顶部导航栏组件
+// 內聯頂部導航欄元件
 const TopNavbar = ({ activePath = '/' }: { activePath?: string }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -25,11 +25,11 @@ const TopNavbar = ({ activePath = '/' }: { activePath?: string }) => {
   const [active, setActive] = useState(activePath);
 
   useEffect(() => {
-    // 优先使用传入的 activePath
+    // 優先使用傳入的 activePath
     if (activePath) {
       setActive(activePath);
     } else {
-      // 否则使用当前路径
+      // 否則使用目前路徑
       const getCurrentFullPath = () => {
         const queryString = searchParams.toString();
         return queryString ? `${pathname}?${queryString}` : pathname;
@@ -46,7 +46,7 @@ const TopNavbar = ({ activePath = '/' }: { activePath?: string }) => {
   const menuItems = [
     {
       icon: Home,
-      label: '首页',
+      label: '首頁',
       href: '/',
     },
     {
@@ -56,28 +56,28 @@ const TopNavbar = ({ activePath = '/' }: { activePath?: string }) => {
     },
     {
       icon: Film,
-      label: '电影',
+      label: '電影',
       href: '/douban?type=movie',
     },
     {
       icon: Tv,
-      label: '剧集',
+      label: '劇集',
       href: '/douban?type=tv',
     },
     {
       icon: Clover,
-      label: '综艺',
+      label: '綜藝',
       href: '/douban?type=show',
     },
   ];
 
-  // 桌面端：顶部固定导航（fixed）
-  // 移动端：不显示此组件，改由底部导航 + 轻量顶部条（非固定）
+  // 桌面端：頂部固定導航（fixed）
+  // 移動端：不顯示此元件，改由底部導航 + 輕量頂部條（非固定）
   return (
     <nav className='w-full bg-white/40 backdrop-blur-xl border-b border-purple-200/50 shadow-lg dark:bg-gray-900/70 dark:border-purple-700/50 fixed top-0 left-0 right-0 z-40 hidden md:block'>
       <div className='w-full px-8 lg:px-12 xl:px-16'>
         <div className='flex items-center justify-between h-16'>
-          {/* Logo区域 - 调整为更靠左 */}
+          {/* Logo區域 - 調整為更靠左 */}
           <div className='flex-shrink-0 -ml-2'>
             <Link
               href='/'
@@ -89,15 +89,15 @@ const TopNavbar = ({ activePath = '/' }: { activePath?: string }) => {
             </Link>
           </div>
 
-          {/* 导航菜单 */}
+          {/* 導航菜單 */}
           <div className='hidden md:block'>
             <div className='ml-10 flex items-baseline space-x-4'>
               {menuItems.map((item) => {
-                // 检查当前路径是否匹配这个菜单项
+                // 檢查目前路徑是否匹配這個菜單項
                 const typeMatch = item.href.match(/type=([^&]+)/)?.[1];
                 const tagMatch = item.href.match(/tag=([^&]+)/)?.[1];
 
-                // 解码URL以进行正确的比较
+                // 解碼URL以進行正確的比較
                 const decodedActive = decodeURIComponent(active);
                 const decodedItemHref = decodeURIComponent(item.href);
 
@@ -152,7 +152,7 @@ const TopNavbar = ({ activePath = '/' }: { activePath?: string }) => {
             </div>
           </div>
 
-          {/* 右侧按钮 - 调整为更靠右，增加间距实现对称效果 */}
+          {/* 右側按鈕 - 調整為更靠右，增加間距實現對稱效果 */}
           <div className='flex items-center gap-3 -mr-2'>
             <ThemeToggle />
             <UserMenu />
@@ -166,26 +166,26 @@ const TopNavbar = ({ activePath = '/' }: { activePath?: string }) => {
 const PageLayout = ({ children, activePath = '/' }: PageLayoutProps) => {
   return (
     <div className='w-full min-h-screen'>
-      {/* 移动端头部 (fixed) */}
+      {/* 移動端頭部 (fixed) */}
       <MobileHeader showBackButton={['/play'].includes(activePath)} />
 
-      {/* 桌面端顶部导航栏 (fixed) */}
+      {/* 桌面端頂部導航欄 (fixed) */}
       <TopNavbar activePath={activePath} />
 
-  {/* 主内容区域 - 预留桌面端顶部导航高度 64px */}
+  {/* 主內容區域 - 預留桌面端頂部導航高度 64px */}
   <div className='relative min-w-0 transition-all duration-300 md:pt-16'>
-        {/* 桌面端左上角返回按钮 */}
+        {/* 桌面端左上角返回按鈕 */}
         {['/play'].includes(activePath) && (
           <div className='absolute top-3 left-1 z-20 hidden md:flex'>
             <BackButton />
           </div>
         )}
 
-        {/* 主内容容器 - 为播放页面使用特殊布局（83.33%宽度），其他页面使用默认布局（66.67%宽度） */}
+        {/* 主內容容器 - 為播放頁面使用特殊佈局（83.33%寬度），其他頁面使用預設佈局（66.67%寬度） */}
         <main className='mb-14 md:mb-0 md:p-6 lg:p-8'>
-          {/* 使用flex布局实现宽度控制 */}
+          {/* 使用flex佈局實現寬度控制 */}
           <div className='flex w-full min-h-[calc(100vh-4rem)]'>
-            {/* 左侧留白区域 - 播放页面占8.33%，其他页面占16.67% */}
+            {/* 左側留白區域 - 播放頁面占8.33%，其他頁面占16.67% */}
             <div
               className='hidden md:block flex-shrink-0'
               style={{ 
@@ -193,7 +193,7 @@ const PageLayout = ({ children, activePath = '/' }: PageLayoutProps) => {
               }}
             ></div>
 
-            {/* 主内容区 - 播放页面占83.33%，其他页面占66.67% */}
+            {/* 主內容區 - 播放頁面占83.33%，其他頁面占66.67% */}
             <div
               className='flex-1 md:flex-none rounded-container w-full'
               style={{ 
@@ -210,7 +210,7 @@ const PageLayout = ({ children, activePath = '/' }: PageLayoutProps) => {
               </div>
             </div>
 
-            {/* 右侧留白区域 - 播放页面占8.33%，其他页面占16.67% */}
+            {/* 右側留白區域 - 播放頁面占8.33%，其他頁面占16.67% */}
             <div
               className='hidden md:block flex-shrink-0'
               style={{ 
@@ -221,7 +221,7 @@ const PageLayout = ({ children, activePath = '/' }: PageLayoutProps) => {
         </main>
       </div>
 
-      {/* 移动端底部导航 */}
+      {/* 移動端底部導航 */}
       <div className='md:hidden'>
         <MobileBottomNav activePath={activePath} />
       </div>

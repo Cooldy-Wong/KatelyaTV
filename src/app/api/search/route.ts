@@ -7,7 +7,7 @@ import { searchFromApi } from '@/lib/downstream';
 
 export const runtime = 'edge';
 
-// 处理OPTIONS预检请求（OrionTV客户端需要）
+// 處理OPTIONS預檢請求（OrionTV客戶端需要）
 export async function OPTIONS() {
   return handleOptionsRequest();
 }
@@ -16,7 +16,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q');
   
-  // 从 Authorization header 或 query parameter 获取用户名
+  // 從 Authorization header 或 query parameter 獲取使用者名稱
   let userName: string | undefined = searchParams.get('user') || undefined;
   if (!userName) {
     const authHeader = request.headers.get('Authorization');
@@ -44,30 +44,30 @@ export async function GET(request: Request) {
   }
 
   try {
-    // 检查是否明确要求包含成人内容（用于关闭过滤时的明确请求）
+    // 檢查是否明確要求包含成人內容（用於關閉過濾時的明確請求）
     const includeAdult = searchParams.get('include_adult') === 'true';
     
-    // 获取用户的成人内容过滤设置
-    let shouldFilterAdult = true; // 默认过滤
+    // 獲取使用者的成人內容過濾設定
+    let shouldFilterAdult = true; // 預設過濾
     if (userName) {
       try {
         const storage = getStorage();
         const userSettings = await storage.getUserSettings(userName);
-        // 如果用户设置存在且明确设为false，则不过滤；否则默认过滤
+        // 如果使用者設定存在且明確設為false，則不過濾；否則預設過濾
         shouldFilterAdult = userSettings?.filter_adult_content !== false;
       } catch (error) {
-        // 出错时默认过滤成人内容
+        // 出錯時預設過濾成人內容
         shouldFilterAdult = true;
       }
     }
 
-    // 根据用户设置和明确请求决定最终的过滤策略
+    // 根據使用者設定和明確請求決定最終的過濾策略
     const finalShouldFilter = shouldFilterAdult || !includeAdult;
     
-    // 使用动态过滤方法，但不依赖缓存，实时获取设置
+    // 使用動態過濾方法，但不依賴快取，實時獲取設定
     const availableSites = finalShouldFilter 
-      ? await getAvailableApiSites(true) // 过滤成人内容
-      : await getAvailableApiSites(false); // 不过滤成人内容
+      ? await getAvailableApiSites(true) // 過濾成人內容
+      : await getAvailableApiSites(false); // 不過濾成人內容
     
     if (!availableSites || availableSites.length === 0) {
       const cacheTime = await getCacheTime();
@@ -84,16 +84,16 @@ export async function GET(request: Request) {
       return addCorsHeaders(response);
     }
 
-    // 搜索所有可用的资源站（已根据用户设置动态过滤）
+    // 搜索所有可用的資源站（已根據使用者設定動態過濾）
     const searchPromises = availableSites.map((site) => searchFromApi(site, query));
     const searchResults = (await Promise.all(searchPromises)).flat();
 
-    // 所有结果都作为常规结果返回，因为成人内容源已经在源头被过滤掉了
+    // 所有結果都作為常規結果返回，因為成人內容源已經在源頭被過濾掉了
     const cacheTime = await getCacheTime();
     const response = NextResponse.json(
       { 
         regular_results: searchResults,
-        adult_results: [] // 始终为空，因为成人内容在源头就被过滤了
+        adult_results: [] // 始終為空，因為成人內容在源頭就被過濾了
       },
       {
         headers: {
@@ -109,7 +109,7 @@ export async function GET(request: Request) {
       { 
         regular_results: [],
         adult_results: [],
-        error: '搜索失败' 
+        error: '搜索失敗' 
       }, 
       { status: 500 }
     );

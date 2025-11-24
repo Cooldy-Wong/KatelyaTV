@@ -7,9 +7,9 @@ interface PaginatedRowProps {
   children: React.ReactNode[];
   itemsPerPage?: number;
   className?: string;
-  onLoadMore?: () => Promise<void>; // 新增：加载更多数据的回调函数
-  hasMoreData?: boolean; // 新增：是否还有更多数据可加载
-  isLoading?: boolean; // 新增：是否正在加载中
+  onLoadMore?: () => Promise<void>; // 新增：載入更多數據的回撥函式
+  hasMoreData?: boolean; // 新增：是否還有更多數據可載入
+  isLoading?: boolean; // 新增：是否正在載入中
 }
 
 export default function PaginatedRow({
@@ -22,58 +22,58 @@ export default function PaginatedRow({
 }: PaginatedRowProps) {
   const [startIndex, setStartIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const uniqueId = useId(); // 为每个实例生成唯一ID
+  const uniqueId = useId(); // 為每個實例產生唯一ID
 
-  // 获取当前显示的项目 - 支持无限向前浏览
+  // 獲取目前顯示的專案 - 支援無限向前瀏覽
   const currentItems = useMemo(() => {
     const endIndex = startIndex + itemsPerPage;
-    // 如果超出范围，循环显示
+    // 如果超出範圍，循環顯示
     if (endIndex <= children.length) {
       return children.slice(startIndex, endIndex);
     } else {
-      // 当超出范围时，从头开始循环
+      // 當超出範圍時，從頭開始循環
       const firstPart = children.slice(startIndex);
       const secondPart = children.slice(0, endIndex - children.length);
       return [...firstPart, ...secondPart];
     }
   }, [children, startIndex, itemsPerPage]);
 
-  // 向前翻页 - 禁止超出第一页
+  // 向前翻頁 - 禁止超出第一頁
   const handlePrevPage = () => {
     setStartIndex((prev) => {
       const newIndex = prev - itemsPerPage;
-      return newIndex < 0 ? 0 : newIndex; // 不允许小于0
+      return newIndex < 0 ? 0 : newIndex; // 不允許小於0
     });
   };
 
-  // 向后翻页 - 支持动态加载更多数据
+  // 向後翻頁 - 支援動態載入更多數據
   const handleNextPage = async () => {
     const newIndex = startIndex + itemsPerPage;
     
-    // 如果即将超出当前数据范围，且有更多数据可加载，且有加载回调函数
+    // 如果即將超出目前數據範圍，且有更多數據可載入，且有載入回撥函式
     if (newIndex >= children.length && hasMoreData && onLoadMore && !isLoading) {
       try {
-        await onLoadMore(); // 加载更多数据
-        // 加载完成后，直接设置到下一页
+        await onLoadMore(); // 載入更多數據
+        // 載入完成後，直接設定到下一頁
         setStartIndex(newIndex);
       } catch (error) {
-        // 静默处理加载错误，保持用户体验
+        // 靜默處理載入錯誤，保持使用者體驗
       }
     } else if (newIndex < children.length) {
-      // 如果还在当前数据范围内，直接翻页
+      // 如果還在目前數據範圍內，直接翻頁
       setStartIndex(newIndex);
     } else {
-      // 如果没有更多数据可加载，循环回到第一页
+      // 如果沒有更多數據可載入，循環回到第一頁
       setStartIndex(0);
     }
   };
 
-  // 检查是否可以向前翻页
+  // 檢查是否可以向前翻頁
   const canGoPrev = startIndex > 0;
-  // 检查是否可以向后翻页：有更多数据或者当前不在最后一页
+  // 檢查是否可以向後翻頁：有更多數據或者目前不在最後一頁
   const canGoNext = children.length > itemsPerPage && (startIndex + itemsPerPage < children.length || hasMoreData || startIndex + itemsPerPage >= children.length);
 
-  // 如果没有足够的内容需要分页，就不显示按钮
+  // 如果沒有足夠的內容需要分頁，就不顯示按鈕
   const needsPagination = children.length > itemsPerPage;
 
   return (
@@ -83,14 +83,14 @@ export default function PaginatedRow({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* 内容区域 - 移除group类以避免悬停效果冲突 */}
+      {/* 內容區域 - 移除group類以避免懸停效果衝突 */}
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 relative'>
         {currentItems}
 
-        {/* 改进的导航按钮 - 仅在容器悬停时显示 */}
+        {/* 改進的導航按鈕 - 僅在容器懸停時顯示 */}
         {needsPagination && (
           <>
-            {/* 左箭头按钮 - 只有不在第一页时才显示 */}
+            {/* 左箭頭按鈕 - 只有不在第一頁時才顯示 */}
             {canGoPrev && (
               <button
                 onClick={handlePrevPage}
@@ -98,16 +98,16 @@ export default function PaginatedRow({
                   isHovered ? 'opacity-100' : 'opacity-0'
                 }`}
                 style={{
-                  // 确保按钮在两行中间
+                  // 確保按鈕在兩行中間
                   top: 'calc(50% - 20px)',
                 }}
-                aria-label='上一页'
+                aria-label='上一頁'
               >
                 <ChevronLeft className='w-5 h-5 text-white' />
               </button>
             )}
 
-            {/* 右箭头按钮 - 总是显示，支持动态加载 */}
+            {/* 右箭頭按鈕 - 總是顯示，支援動態載入 */}
             {canGoNext && (
               <button
                 onClick={handleNextPage}
@@ -116,10 +116,10 @@ export default function PaginatedRow({
                   isHovered ? 'opacity-100' : 'opacity-0'
                 }`}
                 style={{
-                  // 确保按钮在两行中间
+                  // 確保按鈕在兩行中間
                   top: 'calc(50% - 20px)',
                 }}
-                aria-label={isLoading ? '加载中...' : '下一页'}
+                aria-label={isLoading ? '載入中...' : '下一頁'}
               >
                 {isLoading ? (
                   <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
@@ -132,7 +132,7 @@ export default function PaginatedRow({
         )}
       </div>
 
-      {/* 移除页码指示器 - 不再需要 */}
+      {/* 移除頁碼指示器 - 不再需要 */}
     </div>
   );
 }

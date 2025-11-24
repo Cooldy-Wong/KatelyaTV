@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   if (storageType === 'localstorage') {
     return NextResponse.json(
       {
-        error: '不支持本地存储进行管理员配置',
+        error: '不支援本地儲存進行管理員配置',
       },
       { status: 400 }
     );
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       DoubanProxy: string;
     };
 
-    // 参数校验
+    // 參數校驗
     if (
       typeof SiteName !== 'string' ||
       typeof Announcement !== 'string' ||
@@ -53,24 +53,24 @@ export async function POST(request: NextRequest) {
       typeof ImageProxy !== 'string' ||
       typeof DoubanProxy !== 'string'
     ) {
-      return NextResponse.json({ error: '参数格式错误' }, { status: 400 });
+      return NextResponse.json({ error: '參數格式錯誤' }, { status: 400 });
     }
 
     const adminConfig = await getConfig();
     const storage = getStorage();
 
-    // 权限校验
+    // 許可權校驗
     if (username !== process.env.USERNAME) {
-      // 管理员
+      // 管理員
       const user = adminConfig.UserConfig.Users.find(
         (u) => u.username === username
       );
       if (!user || user.role !== 'admin') {
-        return NextResponse.json({ error: '权限不足' }, { status: 401 });
+        return NextResponse.json({ error: '許可權不足' }, { status: 401 });
       }
     }
 
-    // 更新缓存中的站点设置
+    // 更新快取中的站點設定
     adminConfig.SiteConfig = {
       SiteName,
       Announcement,
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       DoubanProxy,
     };
 
-    // 写入数据库
+    // 寫入數據庫
     if (storage && typeof (storage as any).setAdminConfig === 'function') {
       await (storage as any).setAdminConfig(adminConfig);
     }
@@ -89,15 +89,15 @@ export async function POST(request: NextRequest) {
       { ok: true },
       {
         headers: {
-          'Cache-Control': 'no-store', // 不缓存结果
+          'Cache-Control': 'no-store', // 不快取結果
         },
       }
     );
   } catch (error) {
-    console.error('更新站点配置失败:', error);
+    console.error('更新站點配置失敗:', error);
     return NextResponse.json(
       {
-        error: '更新站点配置失败',
+        error: '更新站點配置失敗',
         details: (error as Error).message,
       },
       { status: 500 }

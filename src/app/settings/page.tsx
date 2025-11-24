@@ -16,7 +16,7 @@ export default function UserSettingsPage() {
   useEffect(() => {
     const auth = getAuthInfoFromBrowserCookie();
     if (!auth || !auth.username) {
-      // 如果用户未登录，重定向到登录页面
+      // 如果使用者未登錄，重定向到登錄頁面
       router.push('/login');
       return;
     }
@@ -25,8 +25,8 @@ export default function UserSettingsPage() {
   }, [router]);
 
   const handleFilterUpdate = (_enabled: boolean) => {
-    // 可以在这里添加一些全局状态更新或通知逻辑
-    // console.log('成人内容过滤状态已更新:', enabled);
+    // 可以在這裡新增一些全域性狀態更新或通知邏輯
+    // console.log('成人內容過濾狀態已更新:', enabled);
   };
 
   if (isLoading) {
@@ -44,7 +44,7 @@ export default function UserSettingsPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto p-6">
-        {/* 页面头部 */}
+        {/* 頁面頭部 */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <button
@@ -56,10 +56,10 @@ export default function UserSettingsPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
                 <Settings className="w-8 h-8 mr-3 text-blue-600" />
-                用户设置
+                使用者設定
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-2">
-                管理您的个人偏好设置和隐私选项
+                管理您的個人偏好設定和隱私選項
               </p>
             </div>
           </div>
@@ -72,12 +72,12 @@ export default function UserSettingsPage() {
           </div>
         </div>
 
-        {/* 设置区域 */}
+        {/* 設定區域 */}
         <div className="space-y-6">
-          {/* 内容过滤设置 */}
+          {/* 內容過濾設定 */}
           <div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              内容过滤
+              內容過濾
             </h2>
             <AdultContentFilter 
               userName={authInfo.userName} 
@@ -85,22 +85,22 @@ export default function UserSettingsPage() {
             />
           </div>
 
-          {/* 其他设置部分预留 */}
+          {/* 其他設定部分預留 */}
           <div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              其他设置
+              其他設定
             </h2>
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                更多设置选项即将推出...
+                更多設定選項即將推出...
               </p>
             </div>
           </div>
         </div>
 
-        {/* 底部信息 */}
+        {/* 底部資訊 */}
         <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-          <p>设置会自动保存并在所有设备间同步</p>
+          <p>設定會自動儲存並在所有裝置間同步</p>
         </div>
       </div>
     </div>

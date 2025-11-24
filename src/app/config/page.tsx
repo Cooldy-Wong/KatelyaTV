@@ -33,12 +33,12 @@ export default function ConfigPage() {
         
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-            配置链接
+            配置鏈接
           </h2>
           
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              格式类型
+              格式型別
             </label>
             <select
               value={format}
@@ -65,55 +65,55 @@ export default function ConfigPage() {
                   : 'bg-blue-500 hover:bg-blue-600 text-white'
               }`}
             >
-              {copied ? '已复制' : '复制'}
+              {copied ? '已複製' : '複製'}
             </button>
           </div>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-            使用说明
+            使用說明
           </h2>
           
           <div className="space-y-4 text-gray-700 dark:text-gray-300">
             <div>
-              <h3 className="font-semibold text-lg mb-2">1. 获取配置链接</h3>
-              <p>复制上方的配置链接，支持 JSON 和 Base64 两种格式。</p>
+              <h3 className="font-semibold text-lg mb-2">1. 獲取配置鏈接</h3>
+              <p>複製上方的配置鏈接，支援 JSON 和 Base64 兩種格式。</p>
             </div>
             
             <div>
-              <h3 className="font-semibold text-lg mb-2">2. 导入 TVBox</h3>
-              <p>打开 TVBox 应用，在配置管理中添加新的接口配置，粘贴复制的链接。</p>
+              <h3 className="font-semibold text-lg mb-2">2. 匯入 TVBox</h3>
+              <p>打開 TVBox 應用，在配置管理中新增新的介面配置，貼上複製的鏈接。</p>
             </div>
             
             <div>
-              <h3 className="font-semibold text-lg mb-2">3. 开始使用</h3>
-              <p>配置导入成功后，即可在 TVBox 中浏览和观看本站的视频内容。</p>
+              <h3 className="font-semibold text-lg mb-2">3. 開始使用</h3>
+              <p>配置匯入成功后，即可在 TVBox 中瀏覽和觀看本站的視訊內容。</p>
             </div>
           </div>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
           <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-            支持功能
+            支援功能
           </h2>
           
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <h3 className="font-semibold text-gray-900 dark:text-white">视频解析</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">視訊解析</h3>
               <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                <li>• 支持多种视频源</li>
-                <li>• 自动解析视频链接</li>
-                <li>• 高清视频播放</li>
+                <li>• 支援多種視訊源</li>
+                <li>• 自動解析視訊鏈接</li>
+                <li>• 高清視訊播放</li>
               </ul>
             </div>
             
             <div className="space-y-2">
-              <h3 className="font-semibold text-gray-900 dark:text-white">兼容性</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">相容性</h3>
               <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                <li>• 完全兼容 TVBox</li>
-                <li>• 支持自定义配置</li>
-                <li>• 实时更新内容</li>
+                <li>• 完全相容 TVBox</li>
+                <li>• 支援自定義配置</li>
+                <li>• 實時更新內容</li>
               </ul>
             </div>
           </div>

@@ -6,7 +6,7 @@ import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense, useEffect, useState } from 'react';
 
-// 客户端收藏 API
+// 客戶端收藏 API
 import {
   type Favorite,
   clearAllFavorites,
@@ -24,7 +24,7 @@ import PaginatedRow from '@/components/PaginatedRow';
 import { useSite } from '@/components/SiteProvider';
 import VideoCard from '@/components/VideoCard';
 
-// 主内容区大型 KatelyaTV Logo 组件
+// 主內容區大型 KatelyaTV Logo 元件
 const MainKatelyaLogo = () => {
   return (
     <div className='main-logo-container'>
@@ -34,12 +34,12 @@ const MainKatelyaLogo = () => {
       {/* 主 Logo */}
       <div className='main-katelya-logo'>KatelyaTV</div>
 
-      {/* 副标题 */}
+      {/* 副標題 */}
       <div className='mt-3 text-center'>
-        <div className='main-logo-subtitle'>极致影视体验，尽在指尖</div>
+        <div className='main-logo-subtitle'>極致影視體驗，盡在指尖</div>
       </div>
 
-      {/* 装饰性粒子效果 */}
+      {/* 裝飾性粒子效果 */}
       <div className='logo-particles'>
         <div className='particle particle-1'></div>
         <div className='particle particle-2'></div>
@@ -52,11 +52,11 @@ const MainKatelyaLogo = () => {
   );
 };
 
-// KatelyaTV 底部 Logo 组件
+// KatelyaTV 底部 Logo 元件
 const BottomKatelyaLogo = () => {
   return (
     <div className='bottom-logo-container'>
-      {/* 浮动几何形状装饰 */}
+      {/* 浮動幾何形狀裝飾 */}
       <div className='floating-shapes'>
         <div className='shape'></div>
         <div className='shape'></div>
@@ -82,7 +82,7 @@ function HomeClient() {
   const [loading, setLoading] = useState(true);
   const { announcement } = useSite();
 
-  // 分页状态管理
+  // 分頁狀態管理
   const [moviePage, setMoviePage] = useState(0);
   const [tvShowPage, setTvShowPage] = useState(0);
   const [varietyShowPage, setVarietyShowPage] = useState(0);
@@ -99,7 +99,7 @@ function HomeClient() {
 
   const [showAnnouncement, setShowAnnouncement] = useState(false);
 
-  // 检查公告弹窗状态
+  // 檢查公告彈窗狀態
   useEffect(() => {
     if (typeof window !== 'undefined' && announcement) {
       const hasSeenAnnouncement = localStorage.getItem('hasSeenAnnouncement');
@@ -111,7 +111,7 @@ function HomeClient() {
     }
   }, [announcement]);
 
-  // 收藏夹数据
+  // 收藏夾數據
   type FavoriteItem = {
     id: string;
     source: string;
@@ -130,11 +130,11 @@ function HomeClient() {
       try {
         setLoading(true);
 
-        // 并行获取热门电影、热门剧集和热门综艺
+        // 並行獲取熱門電影、熱門劇集和熱門綜藝
         const [moviesData, tvShowsData, varietyShowsData] = await Promise.all([
           getDoubanCategories({
             kind: 'movie',
-            category: '热门',
+            category: '熱門',
             type: '全部',
           }),
           getDoubanCategories({ kind: 'tv', category: 'tv', type: 'tv' }),
@@ -153,8 +153,8 @@ function HomeClient() {
           setHotVarietyShows(varietyShowsData.list);
         }
       } catch (error) {
-        // 静默处理错误，避免控制台警告
-        // console.error('获取豆瓣数据失败:', error);
+        // 靜默處理錯誤，避免控制檯警告
+        // console.error('獲取豆瓣數據失敗:', error);
       } finally {
         setLoading(false);
       }
@@ -163,7 +163,7 @@ function HomeClient() {
     fetchDoubanData();
   }, []);
 
-  // 加载更多电影
+  // 載入更多電影
   const loadMoreMovies = async () => {
     if (loadingMore.movies || !hasMoreData.movies) return;
 
@@ -172,7 +172,7 @@ function HomeClient() {
       const nextPage = moviePage + 1;
       const moviesData = await getDoubanCategories({
         kind: 'movie',
-        category: '热门',
+        category: '熱門',
         type: '全部',
         pageStart: nextPage * 20,
         pageLimit: 20,
@@ -181,7 +181,7 @@ function HomeClient() {
       if (moviesData.code === 200 && moviesData.list.length > 0) {
         setHotMovies(prev => [...prev, ...moviesData.list]);
         setMoviePage(nextPage);
-        // 如果返回的数据少于请求的数量，说明没有更多数据了
+        // 如果返回的數據少於請求的數量，說明沒有更多數據了
         if (moviesData.list.length < 20) {
           setHasMoreData(prev => ({ ...prev, movies: false }));
         }
@@ -189,13 +189,13 @@ function HomeClient() {
         setHasMoreData(prev => ({ ...prev, movies: false }));
       }
     } catch (error) {
-      // 静默处理错误
+      // 靜默處理錯誤
     } finally {
       setLoadingMore(prev => ({ ...prev, movies: false }));
     }
   };
 
-  // 加载更多剧集
+  // 載入更多劇集
   const loadMoreTvShows = async () => {
     if (loadingMore.tvShows || !hasMoreData.tvShows) return;
 
@@ -220,13 +220,13 @@ function HomeClient() {
         setHasMoreData(prev => ({ ...prev, tvShows: false }));
       }
     } catch (error) {
-      // 静默处理错误
+      // 靜默處理錯誤
     } finally {
       setLoadingMore(prev => ({ ...prev, tvShows: false }));
     }
   };
 
-  // 加载更多综艺
+  // 載入更多綜藝
   const loadMoreVarietyShows = async () => {
     if (loadingMore.varietyShows || !hasMoreData.varietyShows) return;
 
@@ -251,17 +251,17 @@ function HomeClient() {
         setHasMoreData(prev => ({ ...prev, varietyShows: false }));
       }
     } catch (error) {
-      // 静默处理错误
+      // 靜默處理錯誤
     } finally {
       setLoadingMore(prev => ({ ...prev, varietyShows: false }));
     }
   };
 
-  // 处理收藏数据更新的函数
+  // 處理收藏數據更新的函式
   const updateFavoriteItems = async (allFavorites: Record<string, Favorite>) => {
     const allPlayRecords = await getAllPlayRecords();
 
-    // 根据保存时间排序（从近到远）
+    // 根據儲存時間排序（從近到遠）
     const sorted = Object.entries(allFavorites)
       .sort(([, a], [, b]) => b.save_time - a.save_time)
       .map(([key, fav]) => {
@@ -269,7 +269,7 @@ function HomeClient() {
         const source = key.slice(0, plusIndex);
         const id = key.slice(plusIndex + 1);
 
-        // 查找对应的播放记录，获取当前集数
+        // 查詢對應的播放記錄，獲取目前集數
         const playRecord = allPlayRecords[key];
         const currentEpisode = playRecord?.index;
 
@@ -288,7 +288,7 @@ function HomeClient() {
     setFavoriteItems(sorted);
   };
 
-  // 当切换到收藏夹时加载收藏数据
+  // 當切換到收藏夾時載入收藏數據
   useEffect(() => {
     if (activeTab !== 'favorites') return;
 
@@ -299,7 +299,7 @@ function HomeClient() {
 
     loadFavorites();
 
-    // 监听收藏更新事件
+    // 監聽收藏更新事件
     const unsubscribe = subscribeToDataUpdates(
       'favoritesUpdated',
       (newFavorites: Record<string, Favorite>) => {
@@ -312,31 +312,31 @@ function HomeClient() {
 
   const handleCloseAnnouncement = (announcement: string) => {
     setShowAnnouncement(false);
-    localStorage.setItem('hasSeenAnnouncement', announcement); // 记录已查看弹窗
+    localStorage.setItem('hasSeenAnnouncement', announcement); // 記錄已檢視彈窗
   };
 
   return (
     <PageLayout>
       <div className='px-4 sm:px-8 lg:px-12 py-4 sm:py-8 overflow-visible'>
-        {/* 主内容区大型 KatelyaTV Logo - 仅在首页显示 */}
+        {/* 主內容區大型 KatelyaTV Logo - 僅在首頁顯示 */}
         {activeTab === 'home' && <MainKatelyaLogo />}
 
-        {/* 顶部 Tab 切换 */}
+        {/* 頂部 Tab 切換 */}
         <div className='mb-8 flex justify-center'>
           <CapsuleSwitch
             options={[
-              { label: '首页', value: 'home' },
-              { label: '收藏夹', value: 'favorites' },
+              { label: '首頁', value: 'home' },
+              { label: '收藏夾', value: 'favorites' },
             ]}
             active={activeTab}
             onChange={(value) => setActiveTab(value as 'home' | 'favorites')}
           />
         </div>
 
-        {/* 主内容区域 - 优化为完全居中布局 */}
+        {/* 主內容區域 - 優化為完全居中佈局 */}
         <div className='w-full max-w-none mx-auto'>
           {activeTab === 'favorites' ? (
-            // 收藏夹视图
+            // 收藏夾檢視
             <>
               <section className='mb-8'>
                 <div className='mb-4 flex items-center justify-between'>
@@ -355,7 +355,7 @@ function HomeClient() {
                     </button>
                   )}
                 </div>
-                {/* 优化收藏夹网格布局，确保在新的居中布局下完美对齐 */}
+                {/* 優化收藏夾網格佈局，確保在新的居中佈局下完美對齊 */}
                 <div className='grid grid-cols-3 gap-x-2 gap-y-14 sm:gap-y-20 px-0 sm:px-2 sm:grid-cols-[repeat(auto-fill,_minmax(11rem,_1fr))] sm:gap-x-6 lg:gap-x-8 justify-items-center'>
                   {favoriteItems.map((item) => (
                     <div
@@ -372,32 +372,32 @@ function HomeClient() {
                   ))}
                   {favoriteItems.length === 0 && (
                     <div className='col-span-full text-center text-gray-500 py-8 dark:text-gray-400'>
-                      暂无收藏内容
+                      暫無收藏內容
                     </div>
                   )}
                 </div>
               </section>
 
-              {/* 收藏夹页面底部 Logo */}
+              {/* 收藏夾頁面底部 Logo */}
               <BottomKatelyaLogo />
             </>
           ) : (
-            // 首页视图
+            // 首頁檢視
             <>
-              {/* 继续观看 */}
+              {/* 繼續觀看 */}
               <ContinueWatching />
 
-              {/* 热门电影 */}
+              {/* 熱門電影 */}
               <section className='mb-8'>
                 <div className='mb-4 flex items-center justify-between'>
                   <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                    热门电影
+                    熱門電影
                   </h2>
                   <Link
                     href='/douban?type=movie'
                     className='flex items-center text-sm text-gray-500 hover:text-purple-700 dark:text-gray-400 dark:hover:text-purple-300 transition-colors'
                   >
-                    查看更多
+                    檢視更多
                     <ChevronRight className='w-4 h-4 ml-1' />
                   </Link>
                 </div>
@@ -408,7 +408,7 @@ function HomeClient() {
                   isLoading={loadingMore.movies}
                 >
                   {loading
-                    ? // 加载状态显示灰色占位数据 (显示10个，2行x5列)
+                    ? // 載入狀態顯示灰色佔位數據 (顯示10個，2行x5列)
                       Array.from({ length: 10 }).map((_, index) => (
                         <div
                           key={index}
@@ -420,7 +420,7 @@ function HomeClient() {
                           <div className='mt-2 h-4 bg-purple-200 rounded animate-pulse dark:bg-purple-800'></div>
                         </div>
                       ))
-                    : // 显示真实数据
+                    : // 顯示真實數據
                       hotMovies.map((movie, index) => (
                         <div
                           key={index}
@@ -440,17 +440,17 @@ function HomeClient() {
                 </PaginatedRow>
               </section>
 
-              {/* 热门剧集 */}
+              {/* 熱門劇集 */}
               <section className='mb-8'>
                 <div className='mb-4 flex items-center justify-between'>
                   <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                    热门剧集
+                    熱門劇集
                   </h2>
                   <Link
                     href='/douban?type=tv'
                     className='flex items-center text-sm text-gray-500 hover:text-purple-700 dark:text-gray-400 dark:hover:text-purple-300 transition-colors'
                   >
-                    查看更多
+                    檢視更多
                     <ChevronRight className='w-4 h-4 ml-1' />
                   </Link>
                 </div>
@@ -461,7 +461,7 @@ function HomeClient() {
                   isLoading={loadingMore.tvShows}
                 >
                   {loading
-                    ? // 加载状态显示灰色占位数据 (显示10个，2行x5列)
+                    ? // 載入狀態顯示灰色佔位數據 (顯示10個，2行x5列)
                       Array.from({ length: 10 }).map((_, index) => (
                         <div
                           key={index}
@@ -473,7 +473,7 @@ function HomeClient() {
                           <div className='mt-2 h-4 bg-purple-200 rounded animate-pulse dark:bg-purple-800'></div>
                         </div>
                       ))
-                    : // 显示真实数据
+                    : // 顯示真實數據
                       hotTvShows.map((show, index) => (
                         <div
                           key={index}
@@ -492,17 +492,17 @@ function HomeClient() {
                 </PaginatedRow>
               </section>
 
-              {/* 热门综艺 */}
+              {/* 熱門綜藝 */}
               <section className='mb-8'>
                 <div className='mb-4 flex items-center justify-between'>
                   <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                    热门综艺
+                    熱門綜藝
                   </h2>
                   <Link
                     href='/douban?type=show'
                     className='flex items-center text-sm text-gray-500 hover:text-purple-700 dark:text-gray-400 dark:hover:text-purple-300 transition-colors'
                   >
-                    查看更多
+                    檢視更多
                     <ChevronRight className='w-4 h-4 ml-1' />
                   </Link>
                 </div>
@@ -513,7 +513,7 @@ function HomeClient() {
                   isLoading={loadingMore.varietyShows}
                 >
                   {loading
-                    ? // 加载状态显示灰色占位数据 (显示10个，2行x5列)
+                    ? // 載入狀態顯示灰色佔位數據 (顯示10個，2行x5列)
                       Array.from({ length: 10 }).map((_, index) => (
                         <div
                           key={index}
@@ -525,7 +525,7 @@ function HomeClient() {
                           <div className='mt-2 h-4 bg-purple-200 rounded animate-pulse dark:bg-purple-800'></div>
                         </div>
                       ))
-                    : // 显示真实数据
+                    : // 顯示真實數據
                       hotVarietyShows.map((show, index) => (
                         <div
                           key={index}
@@ -544,7 +544,7 @@ function HomeClient() {
                 </PaginatedRow>
               </section>
 
-              {/* 首页底部 Logo */}
+              {/* 首頁底部 Logo */}
               <BottomKatelyaLogo />
             </>
           )}
@@ -564,7 +564,7 @@ function HomeClient() {
               <button
                 onClick={() => handleCloseAnnouncement(announcement)}
                 className='text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-white transition-colors'
-                aria-label='关闭'
+                aria-label='關閉'
               ></button>
             </div>
             <div className='mb-6'>

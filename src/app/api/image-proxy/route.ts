@@ -4,12 +4,12 @@ import { addCorsHeaders, handleOptionsRequest } from '@/lib/cors';
 
 export const runtime = 'edge';
 
-// 处理OPTIONS预检请求（OrionTV客户端需要）
+// 處理OPTIONS預檢請求（OrionTV客戶端需要）
 export async function OPTIONS() {
   return handleOptionsRequest();
 }
 
-// OrionTV 兼容接口
+// OrionTV 相容介面
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const imageUrl = searchParams.get('url');
@@ -46,18 +46,18 @@ export async function GET(request: Request) {
       return addCorsHeaders(response);
     }
 
-    // 创建响应头
+    // 建立響應頭
     const headers = new Headers();
     if (contentType) {
       headers.set('Content-Type', contentType);
     }
 
-    // 设置缓存头（可选）
-    headers.set('Cache-Control', 'public, max-age=15720000, s-maxage=15720000'); // 缓存半年
+    // 設定快取頭（可選）
+    headers.set('Cache-Control', 'public, max-age=15720000, s-maxage=15720000'); // 快取半年
     headers.set('CDN-Cache-Control', 'public, s-maxage=15720000');
     headers.set('Vercel-CDN-Cache-Control', 'public, s-maxage=15720000');
 
-    // 直接返回图片流
+    // 直接返回圖片流
     const response = new Response(imageResponse.body, {
       status: 200,
       headers,

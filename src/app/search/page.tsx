@@ -19,9 +19,9 @@ import PageLayout from '@/components/PageLayout';
 import VideoCard from '@/components/VideoCard';
 
 function SearchPageClient() {
-  // 搜索历史
+  // 搜索歷史
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
-  // 返回顶部按钮显示状态
+  // 返回頂部按鈕顯示狀態
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   const router = useRouter();
@@ -31,16 +31,16 @@ function SearchPageClient() {
   const [showResults, setShowResults] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   
-  // 分组结果状态
+  // 分組結果狀態
   const [groupedResults, setGroupedResults] = useState<{
     regular: SearchResult[];
     adult: SearchResult[];
   } | null>(null);
   
-  // 分组标签页状态
+  // 分組標籤頁狀態
   const [activeTab, setActiveTab] = useState<'regular' | 'adult'>('regular');
 
-  // 获取默认聚合设置：只读取用户本地设置，默认为 true
+  // 獲取預設聚合設定：只讀取使用者本地設定，預設為 true
   const getDefaultAggregate = () => {
     if (typeof window !== 'undefined') {
       const userSetting = localStorage.getItem('defaultAggregateSearch');
@@ -48,18 +48,18 @@ function SearchPageClient() {
         return JSON.parse(userSetting);
       }
     }
-    return true; // 默认启用聚合
+    return true; // 預設啟用聚合
   };
 
   const [viewMode, setViewMode] = useState<'agg' | 'all'>(() => {
     return getDefaultAggregate() ? 'agg' : 'all';
   });
 
-  // 聚合函数
+  // 聚合函式
   const aggregateResults = (results: SearchResult[]) => {
     const map = new Map<string, SearchResult[]>();
     results.forEach((item) => {
-      // 使用 title + year + type 作为键
+      // 使用 title + year + type 作為鍵
       const key = `${item.title.replaceAll(' ', '')}-${
         item.year || 'unknown'
       }-${item.episodes.length === 1 ? 'movie' : 'tv'}`;
@@ -68,7 +68,7 @@ function SearchPageClient() {
       map.set(key, arr);
     });
     return Array.from(map.entries()).sort((a, b) => {
-      // 优先排序：标题与搜索词完全一致的排在前面
+      // 優先排序：標題與搜索詞完全一致的排在前面
       const aExactMatch = a[1][0].title
         .replaceAll(' ', '')
         .includes(searchQuery.trim().replaceAll(' ', ''));
@@ -100,13 +100,13 @@ function SearchPageClient() {
   };
 
   useEffect(() => {
-    // 无搜索参数时聚焦搜索框
+    // 無搜索參數時聚焦搜索框
     !searchParams.get('q') && document.getElementById('searchInput')?.focus();
 
-    // 初始加载搜索历史
+    // 初始載入搜索歷史
     getSearchHistory().then(setSearchHistory);
 
-    // 监听搜索历史更新事件
+    // 監聽搜索歷史更新事件
     const unsubscribe = subscribeToDataUpdates(
       'searchHistoryUpdated',
       (newHistory: string[]) => {
@@ -114,12 +114,12 @@ function SearchPageClient() {
       }
     );
 
-    // 获取滚动位置的函数 - 专门针对 body 滚动
+    // 獲取滾動位置的函式 - 專門針對 body 滾動
     const getScrollTop = () => {
       return document.body.scrollTop || 0;
     };
 
-    // 使用 requestAnimationFrame 持续检测滚动位置
+    // 使用 requestAnimationFrame 持續檢測滾動位置
     let isRunning = false;
     const checkScrollPosition = () => {
       if (!isRunning) return;
@@ -131,11 +131,11 @@ function SearchPageClient() {
       requestAnimationFrame(checkScrollPosition);
     };
 
-    // 启动持续检测
+    // 啟動持續檢測
     isRunning = true;
     checkScrollPosition();
 
-    // 监听 body 元素的滚动事件
+    // 監聽 body 元素的滾動事件
     const handleScroll = () => {
       const scrollTop = getScrollTop();
       setShowBackToTop(scrollTop > 300);
@@ -145,21 +145,21 @@ function SearchPageClient() {
 
     return () => {
       unsubscribe();
-      isRunning = false; // 停止 requestAnimationFrame 循环
+      isRunning = false; // 停止 requestAnimationFrame 循環
 
-      // 移除 body 滚动事件监听器
+      // 移除 body 滾動事件監聽器
       document.body.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   useEffect(() => {
-    // 当搜索参数变化时更新搜索状态
+    // 當搜索參數變化時更新搜索狀態
     const query = searchParams.get('q');
     if (query) {
       setSearchQuery(query);
       fetchSearchResults(query);
 
-      // 保存到搜索历史 (事件监听会自动更新界面)
+      // 儲存到搜索歷史 (事件監聽會自動更新界面)
       addSearchHistory(query);
     } else {
       setShowResults(false);
@@ -170,17 +170,17 @@ function SearchPageClient() {
     try {
       setIsLoading(true);
       
-      // 获取用户认证信息
+      // 獲取使用者認證資訊
       const authInfo = getAuthInfoFromBrowserCookie();
       
-      // 构建请求头
+      // 構建請求頭
       const headers: HeadersInit = {};
       if (authInfo?.username) {
         headers['Authorization'] = `Bearer ${authInfo.username}`;
       }
       
-      // 简化的搜索请求 - 成人内容过滤现在在API层面自动处理
-      // 添加时间戳参数避免缓存问题
+      // 簡化的搜索請求 - 成人內容過濾現在在API層面自動處理
+      // 新增時間戳參數避免快取問題
       const timestamp = Date.now();
       const response = await fetch(
         `/api/search?q=${encodeURIComponent(query.trim())}&t=${timestamp}`, 
@@ -193,23 +193,23 @@ function SearchPageClient() {
       );
       const data = await response.json();
       
-      // 处理新的搜索结果格式
+      // 處理新的搜索結果格式
       if (data.regular_results || data.adult_results) {
-        // 处理分组结果
+        // 處理分組結果
         setGroupedResults({
           regular: data.regular_results || [],
           adult: data.adult_results || []
         });
         setSearchResults([...(data.regular_results || []), ...(data.adult_results || [])]);
       } else if (data.grouped) {
-        // 兼容旧的分组格式
+        // 相容舊的分組格式
         setGroupedResults({
           regular: data.regular || [],
           adult: data.adult || []
         });
         setSearchResults([...(data.regular || []), ...(data.adult || [])]);
       } else {
-        // 兼容旧的普通结果格式
+        // 相容舊的普通結果格式
         setGroupedResults(null);
         setSearchResults(data.results || []);
       }
@@ -228,29 +228,29 @@ function SearchPageClient() {
     const trimmed = searchQuery.trim().replace(/\s+/g, ' ');
     if (!trimmed) return;
 
-    // 回显搜索框
+    // 回顯搜索框
     setSearchQuery(trimmed);
     setIsLoading(true);
     setShowResults(true);
 
     router.push(`/search?q=${encodeURIComponent(trimmed)}`);
-    // 直接发请求
+    // 直接發請求
     fetchSearchResults(trimmed);
 
-    // 保存到搜索历史 (事件监听会自动更新界面)
+    // 儲存到搜索歷史 (事件監聽會自動更新界面)
     addSearchHistory(trimmed);
   };
 
-  // 返回顶部功能
+  // 返回頂部功能
   const scrollToTop = () => {
     try {
-      // 根据调试结果，真正的滚动容器是 document.body
+      // 根據除錯結果，真正的滾動容器是 document.body
       document.body.scrollTo({
         top: 0,
         behavior: 'smooth',
       });
     } catch (error) {
-      // 如果平滑滚动完全失败，使用立即滚动
+      // 如果平滑滾動完全失敗，使用立即滾動
       document.body.scrollTop = 0;
     }
   };
@@ -268,14 +268,14 @@ function SearchPageClient() {
                 type='text'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder='搜索电影、电视剧...'
+                placeholder='搜索電影、電視劇...'
                 className='w-full h-12 rounded-lg bg-gray-50/80 py-3 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white border border-gray-200/50 shadow-sm dark:bg-gray-800 dark:text-gray-300 dark:placeholder-gray-500 dark:focus:bg-gray-700 dark:border-gray-700'
               />
             </div>
           </form>
         </div>
 
-        {/* 搜索结果或搜索历史 */}
+        {/* 搜索結果或搜索歷史 */}
         <div className='max-w-[95%] mx-auto mt-12 overflow-visible'>
           {isLoading ? (
             <div className='flex justify-center items-center h-40'>
@@ -283,12 +283,12 @@ function SearchPageClient() {
             </div>
           ) : showResults ? (
             <section className='mb-12'>
-              {/* 标题 + 聚合开关 */}
+              {/* 標題 + 聚合開關 */}
               <div className='mb-8 flex items-center justify-between'>
                 <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                  搜索结果
+                  搜索結果
                 </h2>
-                {/* 聚合开关 */}
+                {/* 聚合開關 */}
                 <label className='flex items-center gap-2 cursor-pointer select-none'>
                   <span className='text-sm text-gray-700 dark:text-gray-300'>
                     聚合
@@ -308,7 +308,7 @@ function SearchPageClient() {
                 </label>
               </div>
               
-              {/* 如果有分组结果且有成人内容，显示分组标签 */}
+              {/* 如果有分組結果且有成人內容，顯示分組標籤 */}
               {groupedResults && groupedResults.adult.length > 0 && (
                 <div className="mb-6">
                   <div className="flex items-center justify-center mb-4">
@@ -321,7 +321,7 @@ function SearchPageClient() {
                             : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                         }`}
                       >
-                        常规结果 ({groupedResults.regular.length})
+                        常規結果 ({groupedResults.regular.length})
                       </button>
                       <button
                         onClick={() => setActiveTab('adult')}
@@ -331,14 +331,14 @@ function SearchPageClient() {
                             : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                         }`}
                       >
-                        成人内容 ({groupedResults.adult.length})
+                        成人內容 ({groupedResults.adult.length})
                       </button>
                     </div>
                   </div>
                   {activeTab === 'adult' && (
                     <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
                       <p className="text-sm text-red-600 dark:text-red-400 text-center">
-                        ⚠️ 以下内容可能包含成人资源，请确保您已年满18周岁
+                        ⚠️ 以下內容可能包含成人資源，請確保您已年滿18週歲
                       </p>
                     </div>
                   )}
@@ -349,7 +349,7 @@ function SearchPageClient() {
                 className='justify-start grid grid-cols-3 gap-x-2 gap-y-14 sm:gap-y-20 px-0 sm:px-2 sm:grid-cols-[repeat(auto-fill,_minmax(11rem,_1fr))] sm:gap-x-8'
               >
                 {(() => {
-                  // 确定要显示的结果
+                  // 確定要顯示的結果
                   let displayResults = searchResults;
                   if (groupedResults && groupedResults.adult.length > 0) {
                     displayResults = activeTab === 'adult' 
@@ -357,7 +357,7 @@ function SearchPageClient() {
                       : groupedResults.regular;
                   }
 
-                  // 聚合显示模式
+                  // 聚合顯示模式
                   if (viewMode === 'agg') {
                     const aggregated = aggregateResults(displayResults);
                     return aggregated.map(([mapKey, group]: [string, SearchResult[]]) => (
@@ -375,7 +375,7 @@ function SearchPageClient() {
                     ));
                   }
 
-                  // 列表显示模式
+                  // 列表顯示模式
                   return displayResults.map((item) => (
                     <div
                       key={`all-${item.source}-${item.id}`}
@@ -403,20 +403,20 @@ function SearchPageClient() {
                 })()}
                 {searchResults.length === 0 && (
                   <div className='col-span-full text-center text-gray-500 py-8 dark:text-gray-400'>
-                    未找到相关结果
+                    未找到相關結果
                   </div>
                 )}
               </div>
             </section>
           ) : searchHistory.length > 0 ? (
-            // 搜索历史
+            // 搜索歷史
             <section className='mb-12'>
               <h2 className='mb-4 text-xl font-bold text-gray-800 text-left dark:text-gray-200'>
-                搜索历史
+                搜索歷史
                 {searchHistory.length > 0 && (
                   <button
                     onClick={() => {
-                      clearSearchHistory(); // 事件监听会自动更新界面
+                      clearSearchHistory(); // 事件監聽會自動更新界面
                     }}
                     className='ml-3 text-sm text-gray-500 hover:text-red-500 transition-colors dark:text-gray-400 dark:hover:text-red-500'
                   >
@@ -438,13 +438,13 @@ function SearchPageClient() {
                     >
                       {item}
                     </button>
-                    {/* 删除按钮 */}
+                    {/* 刪除按鈕 */}
                     <button
-                      aria-label='删除搜索历史'
+                      aria-label='刪除搜索歷史'
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        deleteSearchHistory(item); // 事件监听会自动更新界面
+                        deleteSearchHistory(item); // 事件監聽會自動更新界面
                       }}
                       className='absolute -top-1 -right-1 w-4 h-4 opacity-0 group-hover:opacity-100 bg-gray-400 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] transition-colors'
                     >
@@ -458,7 +458,7 @@ function SearchPageClient() {
         </div>
       </div>
 
-      {/* 返回顶部悬浮按钮 */}
+      {/* 返回頂部懸浮按鈕 */}
       <button
         onClick={scrollToTop}
         className={`fixed bottom-20 md:bottom-6 right-6 z-[500] w-12 h-12 bg-green-500/90 hover:bg-green-500 text-white rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 ease-in-out flex items-center justify-center group ${
@@ -466,7 +466,7 @@ function SearchPageClient() {
             ? 'opacity-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 translate-y-4 pointer-events-none'
         }`}
-        aria-label='返回顶部'
+        aria-label='返回頂部'
       >
         <ChevronUp className='w-6 h-6 transition-transform group-hover:scale-110' />
       </button>

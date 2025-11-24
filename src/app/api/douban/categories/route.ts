@@ -22,11 +22,11 @@ interface DoubanCategoryApiResponse {
 async function fetchDoubanData(
   url: string
 ): Promise<DoubanCategoryApiResponse> {
-  // 添加超时控制
+  // 新增超時控制
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超時
 
-  // 设置请求选项，包括信号和头部
+  // 設定請求選項，包括訊號和頭部
   const fetchOptions = {
     signal: controller.signal,
     headers: {
@@ -39,7 +39,7 @@ async function fetchDoubanData(
   };
 
   try {
-    // 尝试直接访问豆瓣API
+    // 嘗試直接訪問豆瓣API
     const response = await fetch(url, fetchOptions);
     clearTimeout(timeoutId);
 
@@ -59,38 +59,38 @@ export const runtime = 'edge';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 
-  // 获取参数
+  // 獲取參數
   const kind = searchParams.get('kind') || 'movie';
   const category = searchParams.get('category');
   const type = searchParams.get('type');
   const pageLimit = parseInt(searchParams.get('limit') || '20');
   const pageStart = parseInt(searchParams.get('start') || '0');
 
-  // 验证参数
+  // 驗證參數
   if (!kind || !category || !type) {
     return NextResponse.json(
-      { error: '缺少必要参数: kind 或 category 或 type' },
+      { error: '缺少必要參數: kind 或 category 或 type' },
       { status: 400 }
     );
   }
 
   if (!['tv', 'movie'].includes(kind)) {
     return NextResponse.json(
-      { error: 'kind 参数必须是 tv 或 movie' },
+      { error: 'kind 參數必須是 tv 或 movie' },
       { status: 400 }
     );
   }
 
   if (pageLimit < 1 || pageLimit > 100) {
     return NextResponse.json(
-      { error: 'pageSize 必须在 1-100 之间' },
+      { error: 'pageSize 必須在 1-100 之間' },
       { status: 400 }
     );
   }
 
   if (pageStart < 0) {
     return NextResponse.json(
-      { error: 'pageStart 不能小于 0' },
+      { error: 'pageStart 不能小於 0' },
       { status: 400 }
     );
   }
@@ -98,10 +98,10 @@ export async function GET(request: Request) {
   const target = `https://m.douban.com/rexxar/api/v2/subject/recent_hot/${kind}?start=${pageStart}&limit=${pageLimit}&category=${category}&type=${type}`;
 
   try {
-    // 调用豆瓣 API
+    // 呼叫豆瓣 API
     const doubanData = await fetchDoubanData(target);
 
-    // 转换数据格式
+    // 轉換數據格式
     const list: DoubanItem[] = doubanData.items.map((item) => ({
       id: item.id,
       title: item.title,
@@ -112,7 +112,7 @@ export async function GET(request: Request) {
 
     const response: DoubanResult = {
       code: 200,
-      message: '获取成功',
+      message: '獲取成功',
       list: list,
     };
 
@@ -126,7 +126,7 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     return NextResponse.json(
-      { error: '获取豆瓣数据失败', details: (error as Error).message },
+      { error: '獲取豆瓣數據失敗', details: (error as Error).message },
       { status: 500 }
     );
   }

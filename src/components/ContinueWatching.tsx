@@ -23,9 +23,9 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
   >([]);
   const [loading, setLoading] = useState(true);
 
-  // 处理播放记录数据更新的函数
+  // 處理播放記錄數據更新的函式
   const updatePlayRecords = (allRecords: Record<string, PlayRecord>) => {
-    // 将记录转换为数组并根据 save_time 由近到远排序
+    // 將記錄轉換為陣列並根據 save_time 由近到遠排序
     const recordsArray = Object.entries(allRecords).map(([key, record]) => ({
       ...record,
       key,
@@ -44,11 +44,11 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
       try {
         setLoading(true);
 
-        // 从缓存或API获取所有播放记录
+        // 從快取或API獲取所有播放記錄
         const allRecords = await getAllPlayRecords();
         updatePlayRecords(allRecords);
       } catch (error) {
-        console.error('获取播放记录失败:', error);
+        console.error('獲取播放記錄失敗:', error);
         setPlayRecords([]);
       } finally {
         setLoading(false);
@@ -57,7 +57,7 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
 
     fetchPlayRecords();
 
-    // 监听播放记录更新事件
+    // 監聽播放記錄更新事件
     const unsubscribe = subscribeToDataUpdates(
       'playRecordsUpdated',
       (newRecords: Record<string, PlayRecord>) => {
@@ -68,18 +68,18 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
     return unsubscribe;
   }, []);
 
-  // 如果没有播放记录，则不渲染组件
+  // 如果沒有播放記錄，則不渲染元件
   if (!loading && playRecords.length === 0) {
     return null;
   }
 
-  // 计算播放进度百分比
+  // 計算播放進度百分比
   const getProgress = (record: PlayRecord) => {
     if (record.total_time === 0) return 0;
     return (record.play_time / record.total_time) * 100;
   };
 
-  // 从 key 中解析 source 和 id
+  // 從 key 中解析 source 和 id
   const parseKey = (key: string) => {
     const [source, id] = key.split('+');
     return { source, id };
@@ -89,7 +89,7 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
     <section className={`mb-8 ${className || ''}`}>
       <div className='mb-4 flex items-center justify-between'>
         <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-          继续观看
+          繼續觀看
         </h2>
         {!loading && playRecords.length > 0 && (
           <button
@@ -105,7 +105,7 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
       </div>
       <ScrollableRow>
         {loading
-          ? // 加载状态显示灰色占位数据
+          ? // 載入狀態顯示灰色佔位數據
             Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
@@ -118,7 +118,7 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
                 <div className='mt-1 h-3 bg-gray-200 rounded animate-pulse dark:bg-gray-800'></div>
               </div>
             ))
-          : // 显示真实数据
+          : // 顯示真實數據
             playRecords.map((record) => {
               const { source, id } = parseKey(record.key);
               return (
